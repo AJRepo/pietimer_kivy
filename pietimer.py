@@ -14,13 +14,12 @@ License: GPL 3. See LICENSE file.
 import sys
 import getopt
 import math
-import kivy
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.uix.label import Label
-from kivy.uix.widget import Widget
+#from kivy.uix.widget import Widget
 from kivy.uix.floatlayout import FloatLayout
-from kivy.utils import colormap
+#from kivy.utils import colormap
 from kivy.graphics import Color, Ellipse
 #from kivy.properties import DictProperty, BooleanProperty
 #from kivy.properties import StringProperty, NumericProperty
@@ -40,10 +39,12 @@ class AnalogClockFace(FloatLayout):
 
 
     #for using .kv file
-    def __init__(self, clock_features={'initialized': False, 'debug': False}, **kwargs):
+    def __init__(self, clock_features=None, **kwargs):
         super(AnalogClockFace, self).__init__(**kwargs)
 
         #is it possible to only have these in class PieTimer?
+        if clock_features is None:
+            clock_features = {'initialized': False, 'debug': False}
         self.running = True
         self.seconds_left = 0.0   #could be a fraction of a second
         self.countdown = True
@@ -77,9 +78,11 @@ class AnalogClockFace(FloatLayout):
             #self.add_pie()
 
             #run this until it returns False
-            event_run = Clock.schedule_interval(self.runclock, .1)
-            print("-------------HI------------------")
-            # to stop use event_run.cancel() or Clock.unschedule(event_run)
+            Clock.schedule_interval(self.runclock, .1)
+            if clock_features['debug'] is True:
+                print("DEBUG: RIGHT AFTER Clock.schedule------------")
+            # Alternatively set event_run = Clock...
+            #     and then to stop use event_run.cancel() or Clock.unschedule(event_run)
 
     def define_pie_widgets(self):
         """Setup the dict of elipses (self.clock_widgets) to identify for operations later"""
@@ -252,7 +255,7 @@ class AnalogClockFace(FloatLayout):
         """When called by Clock.asdf it takes two arguments
         """
 
-        last_seconds_left = round(self.seconds_left, 0)
+        round_seconds_left = round(self.seconds_left, 0)
 
         if self.running is True:
             if self.countdown is True:
@@ -267,6 +270,9 @@ class AnalogClockFace(FloatLayout):
             print("DEBUG LAST=", timesince_last_run)
             print("DEBUG LEFT=", self.seconds_left)
 
+        if self.clock_features['term_ppm'] == 1 \
+           and abs(round_seconds_left - self.seconds_left) < .1:
+            print(f"{round_seconds_left} seconds left")
 
         if self.seconds_left <=0:
             if self.clock_features['debug'] is True:
