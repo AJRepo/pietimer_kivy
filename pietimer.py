@@ -14,7 +14,6 @@ License: GPL 3. See LICENSE file.
 import sys
 import getopt
 import math
-import time
 import kivy
 from kivy.app import App
 from kivy.clock import Clock
@@ -31,21 +30,20 @@ from kivy.core.window import Window
 
 class AnalogClockFace(FloatLayout):
     """Kivy requires defining args passed in before init"""
-    # See https://kivy.org/doc/stable/api-kivy.properties.html?highlight=properties 
-    #ajoaasdf = StringProperty("hello world")
-    #print("-------------------",ajoaasdf,"--------------------------")        
-
-    #Properties: To declare properties, you must declare them at the class level. 
-    #   The class will then do the work to instantiate the real attributes when your object is created. 
-    #   These properties are not attributes: they are mechanisms for creating events based on your attributes:
+    # See https://kivy.org/doc/stable/api-kivy.properties.html?highlight=properties
+    # Properties: To declare properties, you must declare them at the class level.
+    #   The class will then do the work to instantiate the real attributes when
+    #   your object is created. These properties are not attributes: they are
+    #    mechanisms for creating events based on your attributes:
     #   e.g. clockp_dict = DictProperty({})
+    #   e.g. ajoaasdf = StringProperty("hello world")
 
 
-    """for using .kv file"""
+    #for using .kv file
     def __init__(self, clock_features={'initialized': False, 'debug': False}, **kwargs):
         super(AnalogClockFace, self).__init__(**kwargs)
 
-        #is it possible to only have these in class PieTimer? 
+        #is it possible to only have these in class PieTimer?
         self.running = True
         self.seconds_left = 0.0   #could be a fraction of a second
         self.countdown = True
@@ -54,7 +52,7 @@ class AnalogClockFace(FloatLayout):
 
         if clock_features['debug'] is True:
             print("DEBUG: AnalogClock clock_features=", clock_features)
-        
+
         #clock_features = PieTimer.setup_args(self)
         #clock_features = AnalogClockFace(clock_features=self.clock_features)
         self.clock_features = clock_features
@@ -65,8 +63,6 @@ class AnalogClockFace(FloatLayout):
                 print(f"VALWIDTH = {val.width}")
 
 
-        
-                
         if clock_features['initialized'] is True:
             PieTimer.set_start_seconds(self)
             print(f"XWIDTH NOW = {clock_features['initialized']}")
@@ -95,28 +91,29 @@ class AnalogClockFace(FloatLayout):
 
 
         #I guess since the first ellipse is the background and the second is the foreground
-        # we don't need to add them to self.clock_widgets and just do self.ids['"pie"'].canvas.children[0]
-        # but this seems easier to read. Change to use the index if too resource intensive. 
+        # we don't need to add them to self.clock_widgets and just do
+        #   self.ids['"pie"'].canvas.children[0]
+        # but this seems easier to read. Change to use the index if too resource intensive.
         i = 0
         found_background_pie = False
-        
+
         for child in self.ids['"pie"'].canvas.children:
             if isinstance(child, Color):
                 if self.clock_features['debug'] is True:
                     print("FOUND COLOR", i, ":", child)
-                
+
             elif isinstance(child, Ellipse):
                 if found_background_pie:
                     #self.clock_widgets["front_pie"].append(child)
                     self.clock_widgets["front_pie"] = [child]
                 else:
                     #self.clock_widgets["back_pie"].append(child)
-                    self.clock_widgets["back_pie"] = [child]                    
-                
+                    self.clock_widgets["back_pie"] = [child]
+
                 found_background_pie = True
                 if self.clock_features['debug'] is True:
                     print("FOUND ELLIPSE", i, ":", child)
-                    
+
             else:
                 if self.clock_features['debug'] is True:
                     print("Found SOMETHING", i, ":", child)
@@ -152,17 +149,17 @@ class AnalogClockFace(FloatLayout):
         with self.ids['"pie"'].canvas:
             Color(1,1,0)
             diameter = 0.4*Window.width
-            self.newpie = Ellipse(
-                                #pos_hint=(Window.center[0] - (0.37*self.width), Window.center[1] - 0.37 * self.height), 
-                                pos=(Window.center[0] - (0.5*diameter), Window.center[1] - 0.5 * diameter),
-                                id="centerpie",
-                                #pos_hint=(1.5,.5),
-                                #size=(.75*self.width,.75*self.height),
-                                #pos_hint=(2,3),
-                                size=(diameter, diameter),
-                                angle_start=0,
-                                angle_end=180
-                                )
+            #diameter = 0.4*self.height
+            Ellipse(
+                   pos=(Window.center[0] - (0.5*diameter), Window.center[1] - 0.5 * diameter),
+                   id="centerpie",
+                   #pos_hint=(1.5,.5),
+                   #size=(.75*self.width,.75*self.height),
+                   #pos_hint=(2,3),
+                   size=(diameter, diameter),
+                   angle_start=0,
+                   angle_end=180
+                   )
             print("In Canvas WIDTH_HINT=", self.size_hint_x)
             print("In Canvas SELF_WIDTH=",self.width)
             print("WINDOW_HEIGHT=",Window.height)
@@ -170,7 +167,7 @@ class AnalogClockFace(FloatLayout):
             print("In Canvas CENTER=",self.center_x)
             print(self.pos_hint)
             #self.canvas.clear()
-            
+
             #Color(colormap['yellow'])
 
         #print("bbbbbbbbbbbbbbbbbbbbbb")
@@ -182,9 +179,9 @@ class AnalogClockFace(FloatLayout):
         #self.canvas.clear()
 
         #print(self.newpie.canvas.children)
-        
-        c = FloatLayout()
-        c.size_hint = (1,1)
+
+        #c = FloatLayout()
+        #c.size_hint = (1,1)
 
 
         #TESTING1 deleting one label/widget
@@ -195,9 +192,9 @@ class AnalogClockFace(FloatLayout):
 
         #DEBUG1: Testing adding string
         ajostring = str("X_size = " + str(self.clock_features['x_size']))
-        b = Label(text=ajostring)
-        b.pos = ["40dp","40dp"]
-        self.add_widget(b)
+        b_var = Label(text=ajostring)
+        b_var.pos = ["40dp","40dp"]
+        self.add_widget(b_var)
         #END DEBUG1
 
     def adjust_pie(self):
@@ -209,11 +206,11 @@ class AnalogClockFace(FloatLayout):
 
 
     def add_clock_numbers(self, total_num=20):
-        #Add Lables for Clock Numbers
+        """Add Lables for Clock Numbers"""
         self.clock_widgets["numbers"] = []
         if total_num < 0:
             print("Can't have count of clock numbers < 0")
-            quit()
+            sys.exit()
         slices=60/total_num
         for i in range(0, total_num):
             number = Label(
@@ -233,7 +230,6 @@ class AnalogClockFace(FloatLayout):
 
             self.add_widget(number)
             #self.ids["face"].add_widget(number)
-        
 
 
     def toggle_running(self, widget):
@@ -247,15 +243,16 @@ class AnalogClockFace(FloatLayout):
 
 
     def print_debug(self, widget):
+        """Print debug code"""
         print("DEBUG: Clockface Running State", self.running)
         print("DEBUG: self: ", self.canvas)
+        print("WIDGET=", widget)
 
     def runclock(self,timesince_last_run=0):
-        """When called by Clock.asdf it takes two arguments 
+        """When called by Clock.asdf it takes two arguments
         """
-        
+
         last_seconds_left = round(self.seconds_left, 0)
-        last_time = time.time()
 
         if self.running is True:
             if self.countdown is True:
@@ -265,7 +262,7 @@ class AnalogClockFace(FloatLayout):
             else:
                 self.seconds_left = self.seconds_left + timesince_last_run
                 #print("DEBUG: +++++++++++RUNNING UP")
-        
+
         if self.clock_features['debug'] is True:
             print("DEBUG LAST=", timesince_last_run)
             print("DEBUG LEFT=", self.seconds_left)
@@ -276,8 +273,10 @@ class AnalogClockFace(FloatLayout):
                 print("ENDING!!!")
             return False
 
+        return True
+
         #not >= 0 because we don't want @0 to execute
-        
+
         #when get to 0 unschedule the Clock event by returning False
         #return False
 
@@ -312,7 +311,6 @@ class PieTimer(App):
     def build(self):
         """This is the last setup of the app. All stuff modifying wigets overridden"""
         print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
-        self.helloajo = "this is a test"
         return AnalogClockFace(clock_features=self.clock_features)
         #b = Label(text="2")
         #self.add_widget(b)
@@ -445,18 +443,18 @@ class PieTimer(App):
             int_size = int(size_arg)
         return int_size
 
-    def fraction_left(self): 
+    def fraction_left(self):
         """Calculate fraction of clock to display as time left"""
         if self.seconds_left <= 60:
             fraction_left = self.seconds_left/60
         else:
             fraction_left = (self.seconds_left%3600)/3600
-        
-        if fraction_left < 0:
-            fraction_left = 0
+
+        #always make sure fraction_left has a value > 0
+        fraction_left = max(fraction_left, 0)
 
         return fraction_left
-    
+
     def set_start_seconds(self):
         """Convert start time parameters to seconds"""
 
@@ -466,15 +464,15 @@ class PieTimer(App):
            self.clock_features['dict_time']['minutes'] == 0 and \
            self.clock_features['dict_time']['seconds'] == 0:
             self.clock_features['dict_time']['minutes'] = 15
-        
+
         #total seconds calculation
         self.seconds_left = self.clock_features['dict_time']['hours']*3600 + \
                         self.clock_features['dict_time']['minutes']*60 + \
                         self.clock_features['dict_time']['seconds']
-    
+
         return self.seconds_left
 
-    
+
 #initiate class and run
 if __name__ == "__main__":
     PieTimer(sys.argv[1:]).run()
