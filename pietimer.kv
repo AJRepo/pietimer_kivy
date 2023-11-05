@@ -1,0 +1,101 @@
+#: set my_color [1, .1, .5]
+AnalogClockFace:
+
+
+<AnalogClockFace>:
+    id: "CF"
+    #Don't use both size and size_hint
+    #size: root.x, root.y
+    #size_hint: 1,1
+    #size: 0.9*min(root.size), 0.9*min(root.size)
+    #size: 1.9*self.minium_height, 1.9*self.minumum_width
+    FloatLayout:
+        id: "pie"
+        size_hint: 1,1
+        #:set timeleft_color [1, .1, .1]
+        #size: 500, 400
+        canvas:
+            #can't have id for canvas
+            #id: "piecanvas"
+            Color:
+                rgb: 1,1,1
+            Ellipse: 
+                id: "backgroundpie"
+                #pos: self.pos
+                #pos: self.x, self.y
+                #Pos is the lower left corner of the square bounding the ellipse. Ugh. 
+                pos: self.center_x - (0.37 * self.width), self.center_y - (0.37 * self.height)
+                #Ellipse can't use pos_hint
+                #pos: 0,50
+                size: .74 * self.width, .74 * self.height
+                #size: .25 * self.width, .25 * self.height
+                #size: self.width, self.height
+                #angle_start: 0
+                #angle_end: 180
+            Color:
+                rgb: timeleft_color
+            Ellipse: 
+                id: "foregroundpie"
+                #Pos is the lower left corner of the square bounding the ellipse. Ugh. 
+                pos: self.center_x - (0.37 * self.width), self.center_y - (0.37 * self.height)
+                #Ellipse can't use pos_hint
+                #pos: 0,50
+                size: .74 * self.width, .74 * self.height
+                angle_start: 0
+                angle_end: 275
+    FloatLayout:
+        id: "clock_buttons"
+        size_hint: None, None
+        size: 0.9*min(root.size), 0.9*min(root.size)
+        pos_hint: {"center_x":0.5, "center_y":0.5}
+        Button:
+            #FloatLayout only pos_hint and the size_hint properties of its children.
+            id: "start_stop"
+            size_hint: None, None
+            #size: "70dp","30dp"
+            size: 1.1* self.texture_size[0], 1.25* self.texture_size[1]
+            pos_hint: {"center_x":0.1, "center_y":0.1}
+            text: "Start (kv)"
+            on_press: root.toggle_running(self)
+        Button:
+            #size: "20dp", "20dp"
+            size_hint: .25, .25
+            pos_hint: {"x":0.8, "center_y":0.5}
+            text: "DEBUG"
+            on_press: root.print_debug(self)
+        #Button:
+        #    pos_hint: {"center_x":0.8, "center_y":0.5}
+        #    text: "Three"
+    #    canvas:
+    #        Color:
+    #            rgb: 1, 1, 1
+    #            Elipse:
+    #                size: self.size
+    #                pos: self.pos
+    #FloatLayout
+    #    id: pie_slice
+    #    size_hint: None, None
+    #    pos_hint: {"center_x":0.5, "center_y":0.5}
+    #    size: 0.9*min(root.size), 0.9*min(root.size)
+
+#    Button:
+#        pos: "200dp", "50dp"
+#        text: "asdfa"
+#    Button:
+#        text: "button2"
+#        pos: "400dp", "200dp"
+#    Button:
+#        text: "button3"
+#        pos: "250dp", "250dp"
+
+<Countdowntimer>:
+    Button:
+        text: "CountButton"
+        size: "100dp", "200dp"
+        pos: "100dp, 100dp"
+#countdowntimer:
+#CountdownTimer:
+#
+#<build>:
+#    Button:
+#        text: "HI"
