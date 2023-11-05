@@ -38,69 +38,61 @@ class AnalogClockFace(FloatLayout):
     #Properties: To declare properties, you must declare them at the class level. 
     #   The class will then do the work to instantiate the real attributes when your object is created. 
     #   These properties are not attributes: they are mechanisms for creating events based on your attributes:
-    #clockp_dict = DictProperty({})
+    #   e.g. clockp_dict = DictProperty({})
 
 
     """for using .kv file"""
-    def __init__(self, clock_features={'x_size': 200}, **kwargs):
+    def __init__(self, clock_features={'initialized': False, 'debug': False}, **kwargs):
         super(AnalogClockFace, self).__init__(**kwargs)
 
         #is it possible to only have these in class PieTimer? 
         self.running = True
-        self.seconds_left = 15
+        self.seconds_left = 0.0   #could be a fraction of a second
         self.countdown = True
         #clockface clock_widgets (numbers around edge)
         self.clock_widgets = {}
-        #can't call this yet
-        #self.adjust_pie()
 
-        print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
-
-        print("DEBUG: AnalogClock clock_features=", clock_features)
+        if clock_features['debug'] is True:
+            print("DEBUG: AnalogClock clock_features=", clock_features)
         
-        self.clockp_dict = clock_features
-        print(self.clockp_dict)
+        #clock_features = PieTimer.setup_args(self)
+        #clock_features = AnalogClockFace(clock_features=self.clock_features)
+        self.clock_features = clock_features
+        if self.clock_features['debug'] is True:
+            print("CLOCKFACE IDS = ", self.ids)
+            for key, val in self.ids.items():
+                print(f"key={key}: val={val}")
+                print(f"VALWIDTH = {val.width}")
 
-        print("CLOCKFACE IDS = ", self.ids)
-        for key, val in self.ids.items():
-            print(f"key={key}: val={val}")
-            print(f"VALWIDTH = {val.width}")
+
         
-        if clock_features['x_size'] > 200:
-            print(f"XWIDTH NOW = {clock_features['x_size']}")
-            self.add_pie()
+                
+        if clock_features['initialized'] is True:
+            PieTimer.set_start_seconds(self)
+            print(f"XWIDTH NOW = {clock_features['initialized']}")
+            #add_clock_numbers: puts a series of numbers around the clock/pie
+            #  Divisble by 60: 2, *4, 3, 5, 10, *12, 15, *20
+            #  these together are interesting
+            #  self.add_clock_numbers(4)
+            #  self.add_clock_numbers(10)
+            self.add_clock_numbers(12)
+            self.define_pie_widgets()
             self.adjust_pie()
-            #run this every 0.5 of a secon
+            #self.add_pie()
+
+            #run this until it returns False
             event_run = Clock.schedule_interval(self.runclock, .1)
             print("-------------HI------------------")
             # to stop use event_run.cancel() or Clock.unschedule(event_run)
 
-
-    def add_pie(self):
-        #idPIE = self.ids["pie"]
-        #self.ids["pieleft"].angle_end=90
-        #self.ids.pieleft.angle_end=90
-        #print(root.width)
-        #print("AAAA=", piewidget.ids)
-
-        print("ADDPIE IDS = ", self.ids)
-        for key, val in self.ids.items():
-            print(f"key={key}: val={val}")
-            print(f"VALWIDTH = {val.width}")
-
-        Window.clearcolor = (0,0,0,0)
+    def define_pie_widgets(self):
+        """Setup the dict of elipses (self.clock_widgets) to identify for operations later"""
         #self.root.ids.pie.
         #print("IDSPIE = ", self.ids['"pie"'].canvas.children[1].rgba)
         print("IDSPIE = ", self.ids['"pie"'].canvas)
         # Doesn't work
         #print("IDSPIE2 = ", self.ids['pie'])
 
-        #doesn't work
-        #Ellipse
-        #self.ids['"pie"'].canvas.children[2].angle_start=190
-        #self.ids['"pie"'].canvas.children[5].angle_end=90
-        #Color
-        #self.ids['"pie"'].canvas.children[0].rgba=(.8,.8,.8,.5)
 
         #I guess since the first ellipse is the background and the second is the foreground
         # we don't need to add them to self.clock_widgets and just do self.ids['"pie"'].canvas.children[0]
@@ -110,7 +102,8 @@ class AnalogClockFace(FloatLayout):
         
         for child in self.ids['"pie"'].canvas.children:
             if isinstance(child, Color):
-                print("FOUND COLOR", i, ":", child)
+                if self.clock_features['debug'] is True:
+                    print("FOUND COLOR", i, ":", child)
                 
             elif isinstance(child, Ellipse):
                 if found_background_pie:
@@ -119,12 +112,42 @@ class AnalogClockFace(FloatLayout):
                 else:
                     #self.clock_widgets["back_pie"].append(child)
                     self.clock_widgets["back_pie"] = [child]                    
-                print("FOUND ELLIPSE", i, ":", child)
+                
                 found_background_pie = True
+                if self.clock_features['debug'] is True:
+                    print("FOUND ELLIPSE", i, ":", child)
+                    
             else:
-                print("Found SOMETHING", i, ":", child)
+                if self.clock_features['debug'] is True:
+                    print("Found SOMETHING", i, ":", child)
             i = i + 1
 
+
+
+    def add_pie(self):
+        """This is just debug code at this point to test adding a pie programatically
+            this does not scale as the window is resized
+        """
+        #idPIE = self.ids["pie"]
+        #self.ids["pieleft"].angle_end=90
+        #self.ids.pieleft.angle_end=90
+        #print(root.width)
+        #print("AAAA=", piewidget.ids)
+
+        #doesn't work
+        #Ellipse
+        #self.ids['"pie"'].canvas.children[2].angle_start=190
+        #self.ids['"pie"'].canvas.children[5].angle_end=90
+        #Color
+        #self.ids['"pie"'].canvas.children[0].rgba=(.8,.8,.8,.5)
+
+
+        print("ADDPIE IDS = ", self.ids)
+        for key, val in self.ids.items():
+            print(f"key={key}: val={val}")
+            print(f"VALWIDTH = {val.width}")
+
+        Window.clearcolor = (0,0,0,0)
         #with self.canvas:
         with self.ids['"pie"'].canvas:
             Color(1,1,0)
@@ -150,26 +173,19 @@ class AnalogClockFace(FloatLayout):
             
             #Color(colormap['yellow'])
 
-        print("bbbbbbbbbbbbbbbbbbbbbb")
-        print("Out Canvas WIDTH_HINT=", self.size_hint_x)
-        print("Out Canvas SELF_WIDTH=",self.width)
-        print("WINDOW_HEIGHT=",Window.height)
-        print("Out Canvas CENTER=",self.center_x)
-        print(self.pos_hint)
+        #print("bbbbbbbbbbbbbbbbbbbbbb")
+        #print("Out Canvas WIDTH_HINT=", self.size_hint_x)
+        #print("Out Canvas SELF_WIDTH=",self.width)
+        #print("WINDOW_HEIGHT=",Window.height)
+        #print("Out Canvas CENTER=",self.center_x)
+        #print(self.pos_hint)
         #self.canvas.clear()
 
         #print(self.newpie.canvas.children)
-        print(self.clockp_dict)
         
         c = FloatLayout()
         c.size_hint = (1,1)
 
-        
-        #Divisble by 60: 2, *4, 3, 5, 10, *12, 15, *20
-        #these together are interesting
-        #self.add_clock_numbers(4)
-        #self.add_clock_numbers(10)
-        self.add_clock_numbers(12)
 
         #TESTING1 deleting one label/widget
         for label in self.clock_widgets["numbers"]:
@@ -178,7 +194,7 @@ class AnalogClockFace(FloatLayout):
         #END TESTING1
 
         #DEBUG1: Testing adding string
-        ajostring = str("X_size = " + str(self.clockp_dict['x_size']))
+        ajostring = str("X_size = " + str(self.clock_features['x_size']))
         b = Label(text=ajostring)
         b.pos = ["40dp","40dp"]
         self.add_widget(b)
@@ -191,10 +207,6 @@ class AnalogClockFace(FloatLayout):
 
         self.clock_widgets["front_pie"][0].angle_end = fraction_left * 360
 
-        #if self.running:
-        #    self.ids.obj.ids['"start_stop"'].text = " Stop  "
-        #else:
-        #    self.ids.obj.ids['"start_stop"'].text = " Start "
 
     def add_clock_numbers(self, total_num=20):
         #Add Lables for Clock Numbers
@@ -236,8 +248,6 @@ class AnalogClockFace(FloatLayout):
 
     def print_debug(self, widget):
         print("DEBUG: Clockface Running State", self.running)
-        #print("DEBUG: AnalogClockface.clockp_dict: ", AnalogClockFace.clockp_dict)
-        print("DEBUG: clockp_dict: ", self.clockp_dict)
         print("DEBUG: self: ", self.canvas)
 
     def runclock(self,timesince_last_run=0):
@@ -256,15 +266,14 @@ class AnalogClockFace(FloatLayout):
                 self.seconds_left = self.seconds_left + timesince_last_run
                 #print("DEBUG: +++++++++++RUNNING UP")
         
-        
-        #print("LAST=", timesince_last_run)
-        #print("LEFT=", self.seconds_left)
+        if self.clock_features['debug'] is True:
+            print("DEBUG LAST=", timesince_last_run)
+            print("DEBUG LEFT=", self.seconds_left)
 
-        #print("DICT=", self.clockp_dict)
-        #print("EXITING=", self.clockp_dict['exiting'])
 
         if self.seconds_left <=0:
-            print("ENDING!!!")
+            if self.clock_features['debug'] is True:
+                print("ENDING!!!")
             return False
 
         #not >= 0 because we don't want @0 to execute
@@ -278,12 +287,17 @@ class PieTimer(App):
     """PieTimer Child Class of App Parent class
     """
     def __init__(self, sys_args, **kwargs):
-        super().__init__(**kwargs)
+        super(PieTimer,self).__init__(**kwargs)
         self.args = sys_args
         self.running = True
-        self.seconds_left = 0  #Not seconds left, could be microtime left
+        self.seconds_left = 0  #Not int. Could be fractions of a second
 
         self.clock_features = self.setup_args()
+
+        #this sets the variable self.seconds_left based on what is returned by setup_args
+        self.set_start_seconds()
+
+
         Window.size = (self.clock_features['x_size'], self.clock_features['y_size'])
 
 
@@ -316,6 +330,7 @@ class PieTimer(App):
         quiet = 0
         term_ppm = 0
         terminal_beep = 0
+        debug=False
         buttons = False
         console_only = False
         display_numeric = False
@@ -342,6 +357,7 @@ class PieTimer(App):
             print("  [--console_only] Only use the console - not graphical timer")
             print("  [-c <color>] [--color=<color>] Color of time remaining")
             print("  [--clock_bg_color=<color>] Color not filled by timer when seconds <= 60")
+            print("  [--debug ] Enable debugging mode and print debugging code to terminal")
             print("  [--help ]   Print Help (this message) and exit")
             print("  [-d ] [--display_numeric]")
             print("  [-h <#>] [--hours=<#>]")
@@ -366,6 +382,8 @@ class PieTimer(App):
                 display_current_time = True
             elif opt in ("-d", "--display_numeric"):
                 display_numeric = True
+            elif opt in ("--debug"):
+                debug = True
             elif opt in ("-x", "--x_size"):
                 int_x_size = self.setup_size(arg)
             elif opt in ("-y", "--y_size"):
@@ -389,8 +407,9 @@ class PieTimer(App):
         int_x_size = self.default_size_check(int_x_size, int_y_size)
 
         #Debugging
-        #for opt, arg in opts:
-        #    print(opt, arg)
+        if debug is True:
+            for opt, arg in opts:
+                print("DEBUG: In setup_args: opt,arg =", opt, arg)
 
         return {'x_size': int_x_size, 'y_size': int_y_size,\
                 'quiet': quiet,\
@@ -403,7 +422,9 @@ class PieTimer(App):
                 'exiting': False, \
                 'console_only': console_only, \
                 'display_numeric': display_numeric, \
-                'display_current_time': display_current_time
+                'display_current_time': display_current_time, \
+                'debug': debug, \
+                'initialized': True
                }
 
     def default_size_check(self, int_size, other_axis):
@@ -435,6 +456,23 @@ class PieTimer(App):
             fraction_left = 0
 
         return fraction_left
+    
+    def set_start_seconds(self):
+        """Convert start time parameters to seconds"""
+
+        print("IN: set_start_seconds: ", self.clock_features)
+        #if everything is 0 then set it to 15 minutes
+        if self.clock_features['dict_time']['hours'] == 0 and \
+           self.clock_features['dict_time']['minutes'] == 0 and \
+           self.clock_features['dict_time']['seconds'] == 0:
+            self.clock_features['dict_time']['minutes'] = 15
+        
+        #total seconds calculation
+        self.seconds_left = self.clock_features['dict_time']['hours']*3600 + \
+                        self.clock_features['dict_time']['minutes']*60 + \
+                        self.clock_features['dict_time']['seconds']
+    
+        return self.seconds_left
 
     
 #initiate class and run
@@ -442,3 +480,5 @@ if __name__ == "__main__":
     PieTimer(sys.argv[1:]).run()
     #PieTimer().run()
     sys.exit(0)
+
+# vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
