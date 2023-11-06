@@ -77,6 +77,10 @@ class AnalogClockFace(FloatLayout):
             self.add_clock_numbers(12)
             self.define_pie_widgets()
             self.adjust_pie()
+            self.ids['"hrs"'].text = str(round(self.seconds_left/3600)%24)
+            self.ids['"min"'].text = str(round(self.seconds_left/60)%60)
+            self.ids['"sec"'].text = str(round(self.seconds_left)%60)
+
             #self.add_pie()
 
             #run this until it returns False
@@ -254,6 +258,11 @@ class AnalogClockFace(FloatLayout):
         print("DEBUG: Clockface Running State", self.running)
         print("DEBUG: self: ", self.canvas)
         print("WIDGET=", widget)
+        print("CLOCK_FEATURES=", self.clock_features)
+        if self.clock_features['debug'] is False:
+            self.clock_features['debug'] = 'True'
+        else:
+            self.clock_features['debug'] = False
 
 
     def runclock(self,timesince_last_run=0):
@@ -262,10 +271,15 @@ class AnalogClockFace(FloatLayout):
 
         round_seconds_left = round(self.seconds_left, 0)
 
+
         if self.running is True:
             if self.countdown is True:
                 self.seconds_left = self.seconds_left - timesince_last_run
                 #print("DEBUG: ----------RUNNING DOWN")
+                self.ids['"hrs"'].text = str(int((round_seconds_left/3600)%24)).rjust(2,"0")
+                self.ids['"min"'].text = str(int((round_seconds_left/60)%60)).rjust(2,"0")
+                self.ids['"sec"'].text = str(int(round_seconds_left%60)).rjust(2,"0")
+
                 self.adjust_pie()
             else:
                 self.seconds_left = self.seconds_left + timesince_last_run
