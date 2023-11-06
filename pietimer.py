@@ -27,6 +27,7 @@ from kivy.core.window import Window
 
 #print(kivy.__version__)
 
+
 class AnalogClockFace(FloatLayout):
     """Kivy requires defining args passed in before init"""
     # See https://kivy.org/doc/stable/api-kivy.properties.html?highlight=properties
@@ -48,6 +49,7 @@ class AnalogClockFace(FloatLayout):
         self.running = True
         self.seconds_left = 0.0   #could be a fraction of a second
         self.countdown = True
+        self.clock_interval = .1
         #clockface clock_widgets (numbers around edge)
         self.clock_widgets = {}
 
@@ -78,7 +80,9 @@ class AnalogClockFace(FloatLayout):
             #self.add_pie()
 
             #run this until it returns False
-            Clock.schedule_interval(self.runclock, .1)
+            Clock.schedule_interval(self.runclock, self.clock_interval)
+            #can we change the interval to be 1 sec if sec_left>60?
+
             if clock_features['debug'] is True:
                 print("DEBUG: RIGHT AFTER Clock.schedule------------")
             # Alternatively set event_run = Clock...
@@ -251,6 +255,7 @@ class AnalogClockFace(FloatLayout):
         print("DEBUG: self: ", self.canvas)
         print("WIDGET=", widget)
 
+
     def runclock(self,timesince_last_run=0):
         """When called by Clock.asdf it takes two arguments
         """
@@ -352,7 +357,7 @@ class PieTimer(App):
                                     ["terminal_beep", "quiet", "hours=", "minutes=", "seconds=",
                                      "buttons", "x_size=", "y_size=", "color=", "clock_bg_color=",
                                      "display_current_time", "console_only", "term_ppm",
-                                     "display_numeric"]
+                                     "display_numeric","debug"]
                                    )
         except getopt.GetoptError:
             print("Usage:\n pietimer.py [Arguments]\n")

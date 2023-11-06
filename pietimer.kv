@@ -1,10 +1,13 @@
+#:set pie_bg_color [1, 1, 1]
+#:set timeleft_color [1, .1, .1]
+#:set text_color [.1, .1, .1]
 #: set my_color [1, .1, .5]
 AnalogClockFace:
 
 
 <AnalogClockFace>:
     id: "CF"
-    #Don't use both size and size_hint
+    #Don't use both size and size_hint (e.g. set size_hint = None for using size)
     #size: root.x, root.y
     #size_hint: 1,1
     #size: 0.9*min(root.size), 0.9*min(root.size)
@@ -12,13 +15,12 @@ AnalogClockFace:
     FloatLayout:
         id: "pie"
         size_hint: 1,1
-        #:set timeleft_color [1, .1, .1]
         #size: 500, 400
         canvas:
             #can't have id for canvas
             #id: "piecanvas"
             Color:
-                rgb: 1,1,1
+                rgb: pie_bg_color
             Ellipse: 
                 id: "backgroundpie"
                 #pos: self.pos
@@ -43,6 +45,48 @@ AnalogClockFace:
                 size: .74 * self.width, .74 * self.height
                 angle_start: 0
                 angle_end: 275
+
+    AnchorLayout:
+        size_hint: 1,.8
+        id: "text time"
+        BoxLayout:
+            anchor_x: 'center'
+            anchor_y: 'center'
+            size_hint: .4, .15
+            #canvas:
+            #    Color:
+            #        rgb: .9,0,.9
+            #    Rectangle:
+            #        size: self.size
+            #        pos: self.pos
+            Button:
+                disabled: True
+                text: "00"
+                background_normal: ''
+                background_disabled_normal: self.background_normal
+                background_color: (.9,.9,.9,1)
+                font_size: 26
+                color: text_color
+                id: "hrs"
+            Button:
+                disabled: True
+                text: "00"
+                background_normal: ''
+                background_disabled_normal: self.background_normal
+                background_color: (.9,.9,.9,1)
+                font_size: 26
+                color: text_color
+                id: "min"
+            Button:
+                disabled: True
+                text: "00"
+                background_normal: ''
+                background_disabled_normal: self.background_normal
+                background_color: (.9,.9,.9,1)
+                font_size: 26
+                color: text_color
+                id: "sec"
+
     FloatLayout:
         id: "clock_buttons"
         size_hint: None, None
@@ -55,38 +99,14 @@ AnalogClockFace:
             #size: "70dp","30dp"
             size: 1.1* self.texture_size[0], 1.25* self.texture_size[1]
             pos_hint: {"center_x":0.1, "center_y":0.1}
-            text: "Start (kv)"
+            text: "STOP"
             on_press: root.toggle_running(self)
         Button:
-            #size: "20dp", "20dp"
             size_hint: .25, .25
             pos_hint: {"x":0.8, "center_y":0.5}
             text: "DEBUG"
             on_press: root.print_debug(self)
-        #Button:
-        #    pos_hint: {"center_x":0.8, "center_y":0.5}
-        #    text: "Three"
-    #    canvas:
-    #        Color:
-    #            rgb: 1, 1, 1
-    #            Elipse:
-    #                size: self.size
-    #                pos: self.pos
-    #FloatLayout
-    #    id: pie_slice
-    #    size_hint: None, None
-    #    pos_hint: {"center_x":0.5, "center_y":0.5}
-    #    size: 0.9*min(root.size), 0.9*min(root.size)
 
-#    Button:
-#        pos: "200dp", "50dp"
-#        text: "asdfa"
-#    Button:
-#        text: "button2"
-#        pos: "400dp", "200dp"
-#    Button:
-#        text: "button3"
-#        pos: "250dp", "250dp"
 
 <Countdowntimer>:
     Button:
@@ -99,3 +119,4 @@ AnalogClockFace:
 #<build>:
 #    Button:
 #        text: "HI"
+# vim: ts=4 expandtab
