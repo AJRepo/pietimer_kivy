@@ -11,6 +11,9 @@ License: GPL 3. See LICENSE file.
 
 """
 
+import os
+os.environ["KCFG_KIVY_LOG_LEVEL"] = "warning"
+# pylint: disable=wrong-import-position
 import sys
 import getopt
 import math
@@ -25,6 +28,8 @@ from kivy.graphics import Color, Ellipse
 #from kivy.properties import StringProperty, NumericProperty
 from kivy.core.window import Window
 
+#Uncommend the below to get NO messages at all from Kivy to the console
+#os.environ["KIVY_NO_CONSOLELOG"] = "1"
 #print(kivy.__version__)
 
 
@@ -68,7 +73,8 @@ class AnalogClockFace(FloatLayout):
 
         if clock_features['initialized'] is True:
             PieTimer.set_start_seconds(self)
-            print(f"XWIDTH NOW = {clock_features['initialized']}")
+            if self.clock_features['debug'] is True:
+                print(f"XWIDTH NOW = {clock_features['initialized']}")
             #add_clock_numbers: puts a series of numbers around the clock/pie
             #  Divisble by 60: 2, *4, 3, 5, 10, *12, 15, *20
             #  these together are interesting
@@ -85,6 +91,7 @@ class AnalogClockFace(FloatLayout):
 
             #run this until it returns False
             Clock.schedule_interval(self.runclock, self.clock_interval)
+
             #can we change the interval to be 1 sec if sec_left>60?
 
             if clock_features['debug'] is True:
@@ -95,10 +102,11 @@ class AnalogClockFace(FloatLayout):
     def define_pie_widgets(self):
         """Setup the dict of elipses (self.clock_widgets) to identify for operations later"""
         #self.root.ids.pie.
-        #print("IDSPIE = ", self.ids['"pie"'].canvas.children[1].rgba)
-        print("IDSPIE = ", self.ids['"pie"'].canvas)
-        # Doesn't work
-        #print("IDSPIE2 = ", self.ids['pie'])
+        if self.clock_features['debug'] is True:
+            #print("IDSPIE = ", self.ids['"pie"'].canvas.children[1].rgba)
+            print("IDSPIE = ", self.ids['"pie"'].canvas)
+            # Doesn't work
+            #print("IDSPIE2 = ", self.ids['pie'])
 
 
         #I guess since the first ellipse is the background and the second is the foreground
@@ -296,7 +304,10 @@ class AnalogClockFace(FloatLayout):
         if self.seconds_left <=0:
             if self.clock_features['debug'] is True:
                 print("ENDING!!!")
-            return False
+            Clock.unschedule(self.runclock)
+            sys.exit()
+            #  return False will unschedule the clock too
+            #  terminate the program
 
         return True
 
@@ -335,7 +346,6 @@ class PieTimer(App):
 
     def build(self):
         """This is the last setup of the app. All stuff modifying wigets overridden"""
-        print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
         return AnalogClockFace(clock_features=self.clock_features)
         #b = Label(text="2")
         #self.add_widget(b)
@@ -483,7 +493,8 @@ class PieTimer(App):
     def set_start_seconds(self):
         """Convert start time parameters to seconds"""
 
-        print("IN: set_start_seconds: ", self.clock_features)
+        if self.clock_features['debug'] is True:
+            print("IN: set_start_seconds: ", self.clock_features)
         #if everything is 0 then set it to 15 minutes
         if self.clock_features['dict_time']['hours'] == 0 and \
            self.clock_features['dict_time']['minutes'] == 0 and \
