@@ -25,7 +25,8 @@ from kivy.uix.floatlayout import FloatLayout
 #from kivy.utils import colormap
 from kivy.graphics import Color, Ellipse
 #from kivy.properties import DictProperty, BooleanProperty
-#from kivy.properties import StringProperty, NumericProperty
+#from kivy.properties import NumericProperty
+from kivy.properties import StringProperty
 from kivy.core.window import Window
 
 #Uncommend the below to get NO messages at all from Kivy to the console
@@ -42,7 +43,9 @@ class AnalogClockFace(FloatLayout):
     #    mechanisms for creating events based on your attributes:
     #   e.g. clockp_dict = DictProperty({})
     #   e.g. ajoaasdf = StringProperty("hello world")
-
+    str_hours = StringProperty("00")
+    str_min = StringProperty("00")
+    str_sec = StringProperty("00")
 
     #for using .kv file
     def __init__(self, clock_features=None, **kwargs):
@@ -83,9 +86,16 @@ class AnalogClockFace(FloatLayout):
             self.add_clock_numbers(12)
             self.define_pie_widgets()
             self.adjust_pie()
-            self.ids['"hrs"'].text = str(round(self.seconds_left/3600)%24)
-            self.ids['"min"'].text = str(round(self.seconds_left/60)%60)
-            self.ids['"sec"'].text = str(round(self.seconds_left)%60)
+
+            #Note: Changed from calling the widget to a StringProperty
+            #self.ids['"hrs"'].text = 
+            self.str_hours = str(round(self.seconds_left/3600)%24)
+
+            #self.ids['"min"'].text = 
+            self.str_min = str(round(self.seconds_left/60)%60)
+
+            #self.ids['"sec"'].text = 
+            self.str_sec = str(round(self.seconds_left)%60)
 
             #self.add_pie()
 
