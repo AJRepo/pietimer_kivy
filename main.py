@@ -19,6 +19,10 @@ os.environ["KCFG_KIVY_LOG_LEVEL"] = "warning"
 import sys
 import getopt
 import math
+from kivy.config import Config
+if sys.platform == 'linux':
+    #os.environ['input_mouse_%(name)s'] = ''
+    Config.set('input', '%(name)s', '')
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.uix.label import Label
@@ -554,6 +558,7 @@ class PieTimer(App):
 
 #initiate class and run
 if __name__ == "__main__":
+    __version__ = "1.0.1"
     PieTimer(sys.argv[1:]).run()
     #PieTimer().run()
     sys.exit(0)
