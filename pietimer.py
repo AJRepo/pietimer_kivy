@@ -13,7 +13,9 @@ License: GPL 3. See LICENSE file.
 
 import os
 os.environ["KCFG_KIVY_LOG_LEVEL"] = "warning"
-# pylint: disable=wrong-import-position
+#Uncomment the following to avoid having to call with "--" before program args
+#os.environ["KIVY_NO_ARGS"] = "1"
+#pylint: disable=wrong-import-position
 import sys
 import getopt
 import math
@@ -29,9 +31,8 @@ from kivy.properties import NumericProperty #pylint: disable=no-name-in-module
 from kivy.properties import StringProperty, BooleanProperty #pylint: disable=no-name-in-module
 from kivy.core.window import Window
 
-#Uncommend the below to get NO messages at all from Kivy to the console
+#Uncomment the below to get NO messages at all from Kivy to the console
 #os.environ["KIVY_NO_CONSOLELOG"] = "1"
-#print(kivy.__version__)
 
 
 class AnalogClockFace(FloatLayout):
@@ -65,6 +66,7 @@ class AnalogClockFace(FloatLayout):
         self.top_opacity = 0
 
         if clock_features['debug'] is True:
+            #print(f"kivy version = {kivy.__version__}")
             print("DEBUG: AnalogClock clock_features=", clock_features)
             self.ids['"debug_button"'].opacity = 1
             self.ids['"debug_button"'].disabled = False
@@ -105,7 +107,9 @@ class AnalogClockFace(FloatLayout):
             #self.add_pie()
 
             #run this until it returns False
-            Clock.schedule_interval(self.runclock, self.clock_interval)
+            if self.clock_features['debug'] is True:
+                self.clock_interval = 1
+            self.myclock = Clock.schedule_interval(self.runclock, self.clock_interval)
 
             #can we change the interval to be 1 sec if sec_left>60?
 
@@ -116,9 +120,14 @@ class AnalogClockFace(FloatLayout):
 
     def set_new_time(self, widget):  #pylint: disable=unused-argument
         """If user updates any hr,min,sec update seconds left"""
-        self.seconds_left = int(self.ids['"sec_top"'].text) + \
-            60*int(self.ids['"min_top"'].text) + \
-            3600*int(self.ids['"hrs_top"'].text)
+        try:
+            self.seconds_left = int(self.ids['"sec_top"'].text) + \
+                60*int(self.ids['"min_top"'].text) + \
+                3600*int(self.ids['"hrs_top"'].text)
+        except (TypeError, ValueError):
+            #do nothing
+            #print("not an int")
+            self.ids['"hrs_top"'].text = "00"
 
         self.adjust_pie()
 
@@ -280,12 +289,14 @@ class AnalogClockFace(FloatLayout):
         """Toggle self.running variable here in widget and in App"""
         if self.running:
             self.running = False
+            self.myclock.cancel()
             self.top_opacity = 1
             widget.text = " Start "
         else:
             self.running = True
             self.top_opacity = 0
             widget.text = " Stop  "
+            self.myclock = Clock.schedule_interval(self.runclock, self.clock_interval)
 
 
     def print_debug(self, widget):
@@ -294,13 +305,14 @@ class AnalogClockFace(FloatLayout):
         print("DEBUG: self: ", self.canvas)
         print("WIDGET=", widget)
         print("CLOCK_FEATURES=", self.clock_features)
-        if self.clock_features['debug'] is False:
-            self.clock_features['debug'] = 'True'
-        else:
-            self.clock_features['debug'] = False
+        #perhaps change this to a toggle button
+        #if self.clock_features['debug'] is False:
+        #    self.clock_features['debug'] = 'True'
+        #else:
+        #    self.clock_features['debug'] = False
 
 
-    def runclock(self,timesince_last_run=0):
+    def runclock(self,dt=0):
         """When called by Clock.asdf it takes two arguments
         """
 
@@ -309,7 +321,7 @@ class AnalogClockFace(FloatLayout):
 
         if self.running is True:
             if self.countdown is True:
-                self.seconds_left = self.seconds_left - timesince_last_run
+                self.seconds_left = self.seconds_left - dt
                 #print("DEBUG: ----------RUNNING DOWN")
                 #Note: Changed from calling the widget to a StringProperty
                 #self.ids['"hrs"'].text =
@@ -319,18 +331,18 @@ class AnalogClockFace(FloatLayout):
                 #self.ids['"sec"'].text =
                 self.str_sec = str(int(round_seconds_left%60)).rjust(2,"0")
 
+                if self.clock_features['term_ppm'] == 1 \
+                   and abs(round_seconds_left - self.seconds_left) < .1:
+                    print(f"{round_seconds_left} seconds left")
+
                 self.adjust_pie()
             else:
-                self.seconds_left = self.seconds_left + timesince_last_run
+                self.seconds_left = self.seconds_left + dt
                 #print("DEBUG: +++++++++++RUNNING UP")
 
         if self.clock_features['debug'] is True:
-            print("DEBUG LAST=", timesince_last_run)
+            print("DEBUG LAST=", dt)
             print("DEBUG LEFT=", self.seconds_left)
-
-        if self.clock_features['term_ppm'] == 1 \
-           and abs(round_seconds_left - self.seconds_left) < .1:
-            print(f"{round_seconds_left} seconds left")
 
         if self.seconds_left <=0:
             if self.clock_features['debug'] is True:
