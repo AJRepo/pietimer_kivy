@@ -25,8 +25,8 @@ from kivy.uix.floatlayout import FloatLayout
 #from kivy.utils import colormap
 from kivy.graphics import Color, Ellipse
 #from kivy.properties import DictProperty, BooleanProperty
-#from kivy.properties import NumericProperty
-from kivy.properties import StringProperty
+from kivy.properties import NumericProperty #pylint: disable=no-name-in-module
+from kivy.properties import StringProperty, BooleanProperty #pylint: disable=no-name-in-module
 from kivy.core.window import Window
 
 #Uncommend the below to get NO messages at all from Kivy to the console
@@ -46,6 +46,8 @@ class AnalogClockFace(FloatLayout):
     str_hours = StringProperty("00")
     str_min = StringProperty("00")
     str_sec = StringProperty("00")
+    running = BooleanProperty(True)
+    top_opacity = NumericProperty(0)
 
     #for using .kv file
     def __init__(self, clock_features=None, **kwargs):
@@ -60,6 +62,7 @@ class AnalogClockFace(FloatLayout):
         self.clock_interval = .1
         #clockface clock_widgets (numbers around edge)
         self.clock_widgets = {}
+        self.top_opacity = 0
 
         if clock_features['debug'] is True:
             print("DEBUG: AnalogClock clock_features=", clock_features)
@@ -88,13 +91,13 @@ class AnalogClockFace(FloatLayout):
             self.adjust_pie()
 
             #Note: Changed from calling the widget to a StringProperty
-            #self.ids['"hrs"'].text = 
+            #self.ids['"hrs"'].text =
             self.str_hours = str(round(self.seconds_left/3600)%24)
 
-            #self.ids['"min"'].text = 
+            #self.ids['"min"'].text =
             self.str_min = str(round(self.seconds_left/60)%60)
 
-            #self.ids['"sec"'].text = 
+            #self.ids['"sec"'].text =
             self.str_sec = str(round(self.seconds_left)%60)
 
             #self.add_pie()
@@ -108,6 +111,29 @@ class AnalogClockFace(FloatLayout):
                 print("DEBUG: RIGHT AFTER Clock.schedule------------")
             # Alternatively set event_run = Clock...
             #     and then to stop use event_run.cancel() or Clock.unschedule(event_run)
+
+    def set_new_time(self, widget):  #pylint: disable=unused-argument
+        """If user updates any hr,min,sec update seconds left"""
+        self.seconds_left = int(self.ids['"sec_top"'].text) + \
+            60*int(self.ids['"min_top"'].text) + \
+            3600*int(self.ids['"hrs_top"'].text)
+
+        self.adjust_pie()
+
+        if self.clock_features['debug'] is True:
+            print(self.ids)
+            print(self.ids['"hrs_top"'].text)
+            print(self.ids['"min_top"'].text)
+            print(self.ids['"sec_top"'].text)
+            print(self.seconds_left)
+
+        #print(widget.parent.parent.parent.ids.obj.ids['"hrs_top"'].text)
+        #for id, value in self.ids.items():
+        #    if value.__self__ == widget:
+        #        print(f"ID={id}")
+        #    else:
+        #        print(f"NOT={id}")
+        #PieTimer.set_start_seconds(self)
 
     def define_pie_widgets(self):
         """Setup the dict of elipses (self.clock_widgets) to identify for operations later"""
@@ -154,19 +180,6 @@ class AnalogClockFace(FloatLayout):
         """This is just debug code at this point to test adding a pie programatically
             this does not scale as the window is resized
         """
-        #idPIE = self.ids["pie"]
-        #self.ids["pieleft"].angle_end=90
-        #self.ids.pieleft.angle_end=90
-        #print(root.width)
-        #print("AAAA=", piewidget.ids)
-
-        #doesn't work
-        #Ellipse
-        #self.ids['"pie"'].canvas.children[2].angle_start=190
-        #self.ids['"pie"'].canvas.children[5].angle_end=90
-        #Color
-        #self.ids['"pie"'].canvas.children[0].rgba=(.8,.8,.8,.5)
-
 
         print("ADDPIE IDS = ", self.ids)
         for key, val in self.ids.items():
@@ -265,9 +278,11 @@ class AnalogClockFace(FloatLayout):
         """Toggle self.running variable here in widget and in App"""
         if self.running:
             self.running = False
+            self.top_opacity = 1
             widget.text = " Start "
         else:
             self.running = True
+            self.top_opacity = 0
             widget.text = " Stop  "
 
 
@@ -294,9 +309,13 @@ class AnalogClockFace(FloatLayout):
             if self.countdown is True:
                 self.seconds_left = self.seconds_left - timesince_last_run
                 #print("DEBUG: ----------RUNNING DOWN")
-                self.ids['"hrs"'].text = str(int((round_seconds_left/3600)%24)).rjust(2,"0")
-                self.ids['"min"'].text = str(int((round_seconds_left/60)%60)).rjust(2,"0")
-                self.ids['"sec"'].text = str(int(round_seconds_left%60)).rjust(2,"0")
+                #Note: Changed from calling the widget to a StringProperty
+                #self.ids['"hrs"'].text =
+                self.str_hours = str(int((round_seconds_left/3600)%24)).rjust(2,"0")
+                #self.ids['"min"'].text =
+                self.str_min = str(int((round_seconds_left/60)%60)).rjust(2,"0")
+                #self.ids['"sec"'].text =
+                self.str_sec = str(int(round_seconds_left%60)).rjust(2,"0")
 
                 self.adjust_pie()
             else:

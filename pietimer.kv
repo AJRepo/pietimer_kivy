@@ -1,7 +1,8 @@
 #:set pie_bg_color [1, 1, 1]
 #:set timeleft_color [1, .1, .1]
 #:set text_color [.1, .1, .1]
-#: set my_color [1, .1, .5]
+#:set my_color [1, .1, .5]
+#:set text_area_hint [.5, .18]
 AnalogClockFace:
 
 
@@ -48,44 +49,95 @@ AnalogClockFace:
 
     AnchorLayout:
         size_hint: 1,.8
-        id: "text time"
+        id: "text_time"
         BoxLayout:
+            id: "bottom_buttons"
             anchor_x: 'center'
             anchor_y: 'center'
-            size_hint: .4, .15
+            size_hint: text_area_hint #see vars at top of page
+            Button:
+                id: "hrs"
+                disabled: True
+                text: root.str_hours
+                background_normal: ''
+                background_disabled_normal: self.background_normal
+                background_color: (.9,.9,.9,1)
+                font_size: self.width/1.5
+                #multiline: False
+                #halign: 'center'
+                #padding_top: self.height/4
+                color: text_color
+                #on_text_validate: root.set_new_time(self)
+            Button:
+                id: "min"
+                disabled: True
+                text: root.str_min
+                background_normal: ''
+                background_disabled_normal: self.background_normal
+                background_color: (.9,.9,.9,1)
+                font_size: self.width/1.5
+                color: text_color
+                #on_text_validate: root.set_new_time(self)
+            Button:
+                id: "sec"
+                #disabled: root.running
+                disabled: True
+                text: root.str_sec
+                background_normal: ''
+                background_disabled_normal: self.background_normal
+                background_color: (.9,.9,.9,1)
+                font_size: self.width/1.5 #was 26
+                color: text_color
+        BoxLayout:
+            id: "top_text_boxes"
+            anchor_x: 'center'
+            anchor_y: 'center'
+            size_hint: text_area_hint
+            opacity: root.top_opacity
             #canvas:
             #    Color:
             #        rgb: .9,0,.9
             #    Rectangle:
             #        size: self.size
             #        pos: self.pos
-            Button:
-                disabled: True
+            TextInput:
+                id: "hrs_top"
+                disabled: root.running  #change to True when clock is running
                 text: root.str_hours
                 background_normal: ''
                 background_disabled_normal: self.background_normal
                 background_color: (.9,.9,.9,1)
-                font_size: 26
+                font_size: self.width/1.75
+                multiline: False
+                halign: 'center'
+                padding_top: self.height/4
                 color: text_color
-                id: "hrs"
-            Button:
-                disabled: True
+                on_text_validate: root.set_new_time(self)
+            TextInput:
+                id: "min_top"
+                disabled: root.running
                 text: root.str_min
                 background_normal: ''
                 background_disabled_normal: self.background_normal
                 background_color: (.9,.9,.9,1)
-                font_size: 26
+                font_size: self.width/1.75
+                multiline: False
+                halign: 'center'
                 color: text_color
-                id: "min"
-            Button:
-                disabled: True
+                on_text_validate: root.set_new_time(self)
+            TextInput:
+                id: "sec_top"
+                #disabled: root.running
+                disabled: root.running
                 text: root.str_sec
                 background_normal: ''
                 background_disabled_normal: self.background_normal
                 background_color: (.9,.9,.9,1)
-                font_size: 26
+                font_size: self.width/1.75
+                multiline: False
+                halign: 'center'
                 color: text_color
-                id: "sec"
+                on_text_validate: root.set_new_time(self)
 
     AnchorLayout:
         id: "debug_buttons"
