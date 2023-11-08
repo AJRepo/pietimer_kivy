@@ -66,6 +66,8 @@ class AnalogClockFace(FloatLayout):
 
         if clock_features['debug'] is True:
             print("DEBUG: AnalogClock clock_features=", clock_features)
+            self.ids['"debug_button"'].opacity = 1
+            self.ids['"debug_button"'].disabled = False
 
         #clock_features = PieTimer.setup_args(self)
         #clock_features = AnalogClockFace(clock_features=self.clock_features)

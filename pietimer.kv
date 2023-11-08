@@ -144,10 +144,13 @@ AnalogClockFace:
         anchor_x: 'right'
         anchor_y: 'bottom'
         Button:
+            id: "debug_button"
             size_hint: .25, .1
             #pos_hint: {"x":0.8, "center_y":0.5}
             text: "DEBUG"
             on_press: root.print_debug(self)
+            opacity: 0
+            disabled: True
 
     AnchorLayout:
         id: "clock_buttons"
