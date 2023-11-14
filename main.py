@@ -415,10 +415,11 @@ class PieTimer(App):
             else:
                 self.clock_features['x_size'] = Window.width
                 self.clock_features['y_size'] = Window.width
+            Window.maximize()
+        else:
+            Window.size = (self.clock_features['x_size'], self.clock_features['y_size'])
 
-        Window.size = (self.clock_features['x_size'], self.clock_features['y_size'])
 
-        #Window.maximize()
 
 
     #def __init__(self, sys_args):
