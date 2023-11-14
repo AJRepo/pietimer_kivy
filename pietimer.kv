@@ -1,8 +1,14 @@
+# Copyright AJRepo@github 2023
+#:import sin math.sin
+#:import cos math.cos
+#:import pi math.pi
+#:import Label kivy.uix.label.Label
 #:set pie_bg_color [1, 1, 1]
 #:set timeleft_color [1, .1, .1]
 #:set text_color [.1, .1, .1]
 #:set my_color [1, .1, .5]
-#:set text_area_hint [.5, .18]
+#:set text_area_hint [.5, None]
+#:set pie_radius_factor .74
 AnalogClockFace:
 
 
@@ -15,46 +21,137 @@ AnalogClockFace:
     #size: 1.9*self.minium_height, 1.9*self.minumum_width
     FloatLayout:
         id: "pie"
-        size_hint: 1,1
+        #size_hint: 1,1  #testing removing for android
         #size: 500, 400
         canvas:
             #can't have id for canvas
             #id: "piecanvas"
             Color:
                 rgb: pie_bg_color
-            Ellipse: 
+            Ellipse:
                 id: "backgroundpie"
                 #pos: self.pos
                 #pos: self.x, self.y
-                #Pos is the lower left corner of the square bounding the ellipse. Ugh. 
-                pos: self.center_x - (0.37 * self.width), self.center_y - (0.37 * self.height)
+                #Pos is the lower left corner of the square bounding the ellipse. Ugh.
+                #pos: self.center_x - (0.37 * self.width), self.center_y - (0.37 * self.width)
+                #pos: root.width/2 - (0.5 * self.width), root.height/2 - (0.5 * self.width)
+                pos: root.width/2 - self.width * pie_radius_factor/2, root.height/2 - self.width * pie_radius_factor/2
                 #Ellipse can't use pos_hint
                 #pos: 0,50
-                size: .74 * self.width, .74 * self.height
+                size: pie_radius_factor * self.width, pie_radius_factor * self.width
                 #size: .25 * self.width, .25 * self.height
                 #size: self.width, self.height
                 #angle_start: 0
                 #angle_end: 180
             Color:
                 rgb: timeleft_color
-            Ellipse: 
+            Ellipse:
                 id: "foregroundpie"
-                #Pos is the lower left corner of the square bounding the ellipse. Ugh. 
-                pos: self.center_x - (0.37 * self.width), self.center_y - (0.37 * self.height)
+                #Pos is the lower left corner of the square bounding the ellipse. Ugh.
+                pos: root.width/2 - self.width * pie_radius_factor/2, root.height/2 - self.width * pie_radius_factor/2
+                #pos: self.center_x, self.center_y
                 #Ellipse can't use pos_hint
                 #pos: 0,50
-                size: .74 * self.width, .74 * self.height
+                size: pie_radius_factor * self.width, pie_radius_factor * self.width
                 angle_start: 0
                 angle_end: 275
+        #this didn't work - don't know why
+        #on_parent:
+        #    for i in range(12): txt=str(i*5); self.add_widget(Label(text=txt,text_size=(None,None),size_hint=(.001,.001),pos=(root.center_x*(1 + 1.1*pie_radius_factor*sin(2*pi*i/12)), root.center_y + 1.1*pie_radius_factor* (root.center_x) * cos(2*pi*i/12) ), color=(0,1,0),font_size="22sp"))
+        Label:
+            text: "0"
+            #text: str(sin(2*pi/12))
+            #text: str(int(self.x))
+            text_size: None,None
+            #size: self.texture_size
+            size_hint: .001,.001  #Make the frame around the label negligible.
+            color: .3, .6, .7, 1
+            font_size: '22sp'
+            pos: root.center_x, root.center_y + root.center_x*pie_radius_factor*1.1
+        Label:
+            text: "5"
+            #text: str(root.center_x)
+            #text: str(cos(2*pi/12))
+            text_size: None,None  # Define the size of the text using font_size
+            size_hint: .001,.001  #Make the frame around the label negligible.
+            color: .3, .6, .7, 1
+            font_size: '22sp'
+            #pos: root.width/2 + 1.1*pie_radius_factor*(root.width/2)*sin(2*pi/12), root.height/2 + 1.1*pie_radius_factor* (root.width/2) * cos(2*pi/12)
+            #simplify the above and it becomes
+            #pos: root.center_x*(1 + 1.1*pie_radius_factor*sin(2*pi/12)), root.center_y + 1.1*pie_radius_factor* (root.center_x) * cos(2*pi/12)
+            #simplify the above and it becomes
+            pos: root.center_x*(1 + 1.1*pie_radius_factor*sin(pi/6)), root.center_y + 1.1*pie_radius_factor* (root.center_x) * cos(pi/6)
+        Label:
+            text: "10"
+            size_hint: .001,.001  #Make the frame around the label negligible.
+            color: .3, .6, .7, 1
+            font_size: '22sp'
+            pos: root.center_x*(1 + 1.1*pie_radius_factor*sin(2*pi/6)), root.center_y + 1.1*pie_radius_factor* (root.center_x) * cos(2*pi/6)
+        Label:
+            text: "15"
+            size_hint: .001,.001  #Make the frame around the label negligible.
+            color: .3, .6, .7, 1
+            font_size: '22sp'
+            pos: root.center_x*(1 + 1.1*pie_radius_factor*sin(3*pi/6)), root.center_y + 1.1*pie_radius_factor* (root.center_x) * cos(3*pi/6)
+        Label:
+            text: "20"
+            size_hint: .001,.001  #Make the frame around the label negligible.
+            color: .3, .6, .7, 1
+            font_size: '22sp'
+            pos: root.center_x*(1 + 1.1*pie_radius_factor*sin(4*pi/6)), root.center_y + 1.1*pie_radius_factor* (root.center_x) * cos(4*pi/6)
+        Label:
+            text: "25"
+            size_hint: .001,.001  #Make the frame around the label negligible.
+            color: .3, .6, .7, 1
+            font_size: '22sp'
+            pos: root.center_x*(1 + 1.1*pie_radius_factor*sin(5*pi/6)), root.center_y + 1.1*pie_radius_factor* (root.center_x) * cos(5*pi/6)
+        Label:
+            text: "30"
+            size_hint: .001,.001  #Make the frame around the label negligible.
+            color: .3, .6, .7, 1
+            font_size: '22sp'
+            pos: root.center_x*(1 + 1.1*pie_radius_factor*sin(6*pi/6)), root.center_y + 1.1*pie_radius_factor* (root.center_x) * cos(6*pi/6)
+        Label:
+            text: "35"
+            size_hint: .001,.001  #Make the frame around the label negligible.
+            color: .3, .6, .7, 1
+            font_size: '22sp'
+            pos: root.center_x*(1 + 1.1*pie_radius_factor*sin(7*pi/6)), root.center_y + 1.1*pie_radius_factor* (root.center_x) * cos(7*pi/6)
+        Label:
+            text: "40"
+            size_hint: .001,.001  #Make the frame around the label negligible.
+            color: .3, .6, .7, 1
+            font_size: '22sp'
+            pos: root.center_x*(1 + 1.1*pie_radius_factor*sin(8*pi/6)), root.center_y + 1.1*pie_radius_factor* (root.center_x) * cos(8*pi/6)
+        Label:
+            text: "45"
+            size_hint: .001,.001  #Make the frame around the label negligible.
+            color: .3, .6, .7, 1
+            font_size: '22sp'
+            pos: root.center_x*(1 + 1.1*pie_radius_factor*sin(9*pi/6)), root.center_y + 1.1*pie_radius_factor* (root.center_x) * cos(9*pi/6)
+        Label:
+            text: "50"
+            size_hint: .001,.001  #Make the frame around the label negligible.
+            color: .3, .6, .7, 1
+            font_size: '22sp'
+            pos: root.center_x*(1 + 1.1*pie_radius_factor*sin(10*pi/6)), root.center_y + 1.1*pie_radius_factor* (root.center_x) * cos(10*pi/6)
+        Label:
+            text: "55"
+            size_hint: .001,.001  #Make the frame around the label negligible.
+            color: .3, .6, .7, 1
+            font_size: '22sp'
+            pos: root.center_x*(1 + 1.1*pie_radius_factor*sin(11*pi/6)), root.center_y + 1.1*pie_radius_factor* (root.center_x) * cos(11*pi/6)
 
     AnchorLayout:
-        size_hint: 1,.8
+        size_hint: 1,.9
+        #pos_hint: {"x":0, "y":0}
         id: "text_time"
         BoxLayout:
             id: "bottom_buttons"
             anchor_x: 'center'
             anchor_y: 'center'
             size_hint: text_area_hint #see vars at top of page
+            size: 20, root.width/8
             Button:
                 id: "hrs"
                 disabled: True
@@ -63,9 +160,9 @@ AnalogClockFace:
                 background_disabled_normal: self.background_normal
                 background_color: (.9,.9,.9,1)
                 font_size: self.width/1.5
+                size: 40,50
                 #multiline: False
                 #halign: 'center'
-                #padding_top: self.height/4
                 color: text_color
                 #on_text_validate: root.set_new_time(self)
             Button:
@@ -93,6 +190,7 @@ AnalogClockFace:
             anchor_x: 'center'
             anchor_y: 'center'
             size_hint: text_area_hint
+            size: 20, root.width/8
             opacity: root.top_opacity
             #canvas:
             #    Color:
@@ -110,7 +208,6 @@ AnalogClockFace:
                 font_size: self.width/1.75
                 multiline: False
                 halign: 'center'
-                padding_top: self.height/4
                 color: text_color
                 on_text_validate: root.set_new_time(self)
             TextInput:
@@ -181,11 +278,11 @@ AnalogClockFace:
     #        on_press: root.toggle_running(self)
 
 
-<Countdowntimer>:
-    Button:
-        text: "CountButton"
-        size: "100dp", "200dp"
-        pos: "100dp, 100dp"
+#<Countdowntimer>:
+#    Button:
+#        text: "CountButton"
+#        size: "100dp", "200dp"
+#        pos: "100dp, 100dp"
 #countdowntimer:
 #CountdownTimer:
 #

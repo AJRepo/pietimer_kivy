@@ -19,8 +19,9 @@ os.environ["KCFG_KIVY_LOG_LEVEL"] = "warning"
 import sys
 import getopt
 import math
+from kivy.utils import platform
 from kivy.config import Config
-if sys.platform == 'linux':
+if platform == 'linux':
     #os.environ['input_mouse_%(name)s'] = ''
     Config.set('input', '%(name)s', '')
 from kivy.app import App
@@ -53,6 +54,7 @@ class AnalogClockFace(FloatLayout):
     str_sec = StringProperty("00")
     running = BooleanProperty(True)
     top_opacity = NumericProperty(0)
+    ajotest = NumericProperty(Window.width)
 
     #for using .kv file
     def __init__(self, clock_features=None, **kwargs):
@@ -68,6 +70,7 @@ class AnalogClockFace(FloatLayout):
         #clockface clock_widgets (numbers around edge)
         self.clock_widgets = {}
         self.top_opacity = 0
+        self.ajotest = Window.width
 
         if clock_features['debug'] is True:
             #print(f"kivy version = {kivy.__version__}")
@@ -94,7 +97,10 @@ class AnalogClockFace(FloatLayout):
             #  these together are interesting
             #  self.add_clock_numbers(4)
             #  self.add_clock_numbers(10)
-            self.add_clock_numbers(12)
+
+            #THIS HAS BEEN COMMENTED OUT AND REPLACED IN .KV FILE
+            #self.add_clock_numbers(12)
+
             self.define_pie_widgets()
             self.adjust_pie()
 
@@ -275,13 +281,20 @@ class AnalogClockFace(FloatLayout):
                 font_size="20dp",
                 bold=False,
                 color=(.3, .6, .7, 1),
-                pos_hint={
-                    # pos_hint is a fraction in range (0, 1)
-                    # this is designed to be used with size_hint: 1,1 (see .kv file)
-                    "center_x": .5 + .43*math.sin(2 * math.pi * i/total_num),
-                    "center_y": .5 + .43*math.cos(2 * math.pi * i/total_num),
-                }
+                ##    # pos_hint is a fraction in range (0, 1)
+                ##    # this is designed to be used with size_hint: 1,1 (see .kv file)
+                #pos_hint={
+                #    "center_x": .5 + .43*math.sin(2 * math.pi * i/total_num),
+                #    "center_y": .5 + .43*math.cos(2 * math.pi * i/total_num),
+                #}
+                pos=(
+                    (Window.width/2 * (math.sin(2 * math.pi * i/total_num))) \
+                        - 10 * (math.sin(2 * math.pi * i/total_num)) ,
+                    (Window.width/2 * (math.cos(2 * math.pi * i/total_num))),
+                )
             )
+            print(f"'center_x': {.5 + .43*math.sin(2 * math.pi * i/total_num)}")
+            print(f"'center_y': {.5 + .43*math.cos(2 * math.pi * i/total_num)}")
             #keep a dict of widgets for use later
             self.clock_widgets["numbers"].append(number)
 
@@ -380,8 +393,32 @@ class PieTimer(App):
         self.set_start_seconds()
 
 
+        #don't set size of window on mobile devices
+        #if kivy.utils.platform == 'linux' or kivy.utils.platform == 'win':
+        #    if self.clock_features['debug'] is True:
+        #        print(f"sys.platform={sys.platform}")
+        #else:
+        #    if Window.width > Window.height:
+        #        self.clock_features['x_size'] = Window.height
+        #        self.clock_features['y_size'] = Window.height
+        #    else:
+        #        self.clock_features['x_size'] = Window.width
+        #        self.clock_features['y_size'] = Window.width
+
+        if self.clock_features['debug'] is True:
+            print(f"sys.platform={sys.platform}")
+            print(f"platform={sys.platform}")
+        if platform == "android":
+            if Window.width > Window.height:
+                self.clock_features['x_size'] = Window.height
+                self.clock_features['y_size'] = Window.height
+            else:
+                self.clock_features['x_size'] = Window.width
+                self.clock_features['y_size'] = Window.width
+
         Window.size = (self.clock_features['x_size'], self.clock_features['y_size'])
 
+        #Window.maximize()
 
 
     #def __init__(self, sys_args):
@@ -558,7 +595,7 @@ class PieTimer(App):
 
 #initiate class and run
 if __name__ == "__main__":
-    __version__ = "1.0.1"
+    __version__ = "1.0.6"
     PieTimer(sys.argv[1:]).run()
     #PieTimer().run()
     sys.exit(0)
