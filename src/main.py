@@ -211,7 +211,7 @@ class AnalogClockFace(FloatLayout):
         #with self.canvas:
         with self.ids['"pie"'].canvas:
             Color(1,1,0)
-            diameter = 0.4*Window.width
+            diameter = 0.4*min(Window.width,Window.height)
             #diameter = 0.4*self.height
             Ellipse(
                    pos=(Window.center[0] - (0.5*diameter), Window.center[1] - 0.5 * diameter),
