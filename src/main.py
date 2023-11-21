@@ -21,26 +21,29 @@ import getopt
 import math
 from kivy.utils import platform
 from kivy.config import Config
-if platform == 'linux':
-    #os.environ['input_mouse_%(name)s'] = ''
-    Config.set('input', '%(name)s', '')
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.uix.label import Label
 #from kivy.uix.widget import Widget
 from kivy.uix.floatlayout import FloatLayout
+#from kivy.uix.textinput import TextInput
 #from kivy.utils import colormap
 from kivy.graphics import Color, Ellipse
 #from kivy.properties import DictProperty, BooleanProperty
 from kivy.properties import NumericProperty #pylint: disable=no-name-in-module
 from kivy.properties import StringProperty, BooleanProperty #pylint: disable=no-name-in-module
 from kivy.core.window import Window
+if platform == 'linux':
+    #os.environ['input_mouse_%(name)s'] = ''
+    Config.set('input', '%(name)s', '')
+    Config.set("graphics", "always_on_top", 1)  # The app will start with the window on top
+    #print(f"PLATFORM={platform}")
 
 #Uncomment the below to get NO messages at all from Kivy to the console
 #os.environ["KIVY_NO_CONSOLELOG"] = "1"
 
 
-class AnalogClockFace(FloatLayout):
+class AnalogClockFace(FloatLayout): #pylint: disable=too-many-instance-attributes
     """Kivy requires defining args passed in before init"""
     # See https://kivy.org/doc/stable/api-kivy.properties.html?highlight=properties
     # Properties: To declare properties, you must declare them at the class level.
@@ -58,7 +61,8 @@ class AnalogClockFace(FloatLayout):
 
     #for using .kv file
     def __init__(self, clock_features=None, **kwargs):
-        super(AnalogClockFace, self).__init__(**kwargs)
+        super().__init__(**kwargs)
+        ##the above is the same as super(AnalogClockFace,self)....
 
         #is it possible to only have these in class PieTimer?
         if clock_features is None:
@@ -71,6 +75,8 @@ class AnalogClockFace(FloatLayout):
         self.clock_widgets = {}
         self.top_opacity = 0
         self.ajotest = Window.width
+        if platform == 'linux':
+            Window.always_on_top = True
 
         if clock_features['debug'] is True:
             #print(f"kivy version = {kivy.__version__}")
@@ -329,7 +335,7 @@ class AnalogClockFace(FloatLayout):
         #    self.clock_features['debug'] = False
 
 
-    def runclock(self,dt=0):
+    def runclock(self,delta_t=0):
         """When called by Clock.asdf it takes two arguments
         """
 
@@ -338,7 +344,7 @@ class AnalogClockFace(FloatLayout):
 
         if self.running is True:
             if self.countdown is True:
-                self.seconds_left = self.seconds_left - dt
+                self.seconds_left = self.seconds_left - delta_t
                 #print("DEBUG: ----------RUNNING DOWN")
                 #Note: Changed from calling the widget to a StringProperty
                 #self.ids['"hrs"'].text =
@@ -354,11 +360,11 @@ class AnalogClockFace(FloatLayout):
 
                 self.adjust_pie()
             else:
-                self.seconds_left = self.seconds_left + dt
+                self.seconds_left = self.seconds_left + delta_t
                 #print("DEBUG: +++++++++++RUNNING UP")
 
         if self.clock_features['debug'] is True:
-            print("DEBUG LAST=", dt)
+            print("DEBUG LAST=", delta_t)
             print("DEBUG LEFT=", self.seconds_left)
 
         if self.seconds_left <=0:
@@ -382,7 +388,7 @@ class PieTimer(App):
     """PieTimer Child Class of App Parent class
     """
     def __init__(self, sys_args, **kwargs):
-        super(PieTimer,self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.args = sys_args
         self.running = True
         self.seconds_left = 0  #Not int. Could be fractions of a second
