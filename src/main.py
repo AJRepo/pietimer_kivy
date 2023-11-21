@@ -273,6 +273,11 @@ class AnalogClockFace(FloatLayout): #pylint: disable=too-many-instance-attribute
 
         self.clock_widgets["front_pie"][0].angle_end = fraction_left * 360
 
+    def update_clock_numbers(self,label,angle):
+        """Unused: This is a failed attempt to get the numbers to resize with the window"""
+        pie_radius_factor = .74
+        label.pos = (Window.width / 2 * (1 + 1.1 * pie_radius_factor * math.sin (angle)),
+                Window.height / 2 + 1.1 * pie_radius_factor * (Window.width / 2) * math.cos (angle))
 
     def add_clock_numbers(self, total_num=20):
         """Add Lables for Clock Numbers"""
@@ -282,6 +287,7 @@ class AnalogClockFace(FloatLayout): #pylint: disable=too-many-instance-attribute
             sys.exit()
         slices=60/total_num
         for i in range(0, total_num):
+            this_angle = 2 * math.pi * i / total_num
             number = Label(
                 text=str(int(i*slices)),
                 font_size="20dp",
@@ -290,21 +296,27 @@ class AnalogClockFace(FloatLayout): #pylint: disable=too-many-instance-attribute
                 ##    # pos_hint is a fraction in range (0, 1)
                 ##    # this is designed to be used with size_hint: 1,1 (see .kv file)
                 #pos_hint={
-                #    "center_x": .5 + .43*math.sin(2 * math.pi * i/total_num),
-                #    "center_y": .5 + .43*math.cos(2 * math.pi * i/total_num),
+                #    "center_x": .5 + .43*math.sin(this_angle),
+                #    "center_y": .5 + .43*math.cos(this_angle),
                 #}
                 pos=(
-                    (Window.width/2 * (math.sin(2 * math.pi * i/total_num))) \
-                        - 10 * (math.sin(2 * math.pi * i/total_num)) ,
-                    (Window.width/2 * (math.cos(2 * math.pi * i/total_num))),
+                    (Window.width/2 * (math.sin(this_angle))) \
+                        - 10 * (math.sin(this_angle)) ,
+                    (Window.width/2 * (math.cos(this_angle))),
                 )
             )
-            print(f"'center_x': {.5 + .43*math.sin(2 * math.pi * i/total_num)}")
-            print(f"'center_y': {.5 + .43*math.cos(2 * math.pi * i/total_num)}")
+            #print(f"'center_x': {.5 + .43*math.sin(this_angle)}")
+            #print(f"'center_y': {.5 + .43*math.cos(this_angle)}")
             #keep a dict of widgets for use later
             self.clock_widgets["numbers"].append(number)
 
-            self.add_widget(number)
+            #The following line has been replaced with the code line below it.
+            #self.add_widget(number)
+            #This replaces the line above. add the label widget to the float layout with id="pie"
+            self.ids['"pie"'].add_widget(number)
+
+            #TEST: numbers to resize with window resizing. See function update_clock_numers (failed)
+            #Window.bind(size=lambda instance, value: self.update_clock_numbers(number,this_angle))
             #self.ids["face"].add_widget(number)
 
 
