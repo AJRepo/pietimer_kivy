@@ -614,7 +614,7 @@ class PieTimer(App):
 
 #initiate class and run
 if __name__ == "__main__":
-    __version__ = "1.0.6"
+    __version__ = "1.0.7"
     PieTimer(sys.argv[1:]).run()
     #PieTimer().run()
     sys.exit(0)

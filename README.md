@@ -3,7 +3,7 @@ A pie timer in python and kivy, based on ajrepo/countdowntimer
 
 # Usage: 
 
-python3 pietimer.py [KIVY OPTION...] [-- PROGRAM OPTIONS]
+python3 src/main.py [KIVY OPTION...] [-- PROGRAM OPTIONS]
 
 Arguments:
   [--buttons] [-b] Add buttons to control timer  (not implemented yet in this version)
@@ -13,7 +13,7 @@ Arguments:
   [-d ] [--display_numeric]  (not implemented yet in this version)
   [-h <#>] [--hours=<#>]
   [-m <#>] [--minutes=<#>]
-  [-n ] [--display_currrent_time]  (not implemented yet in this version)
+  [-n ] [--display_currrent_time]  (always true in this version)
   [-s <#>] [--secondss=<#>]
   [-q or --quiet]  Do not print time left in terminal  (not implemented yet in this version)
   [--term_ppm] Print to terminal time left each minute  (not implemented yet in this version)
@@ -24,18 +24,42 @@ Arguments:
 
 If the -q or --quiet flag is set then don't print anything on the command line, otherwise print a countdown also.
 
-# Installation
+# Installation on Desktop
 
 1. Clone the repo
 
 `git clone ... `
 
-2. (optional) If you are installing the .apk file then do a checksum of the .apk file
+2. Make executable (optional)
+
+`chmod u+x main.py`
+
+That's it. You've installed it. If you made it executable you can call it directly
+as src/main.py, otherwise call it as "python3 /path/to/main.py"
+
+# Installation on Mobile Device (Android)
+
+1. Do a checksum of the .apk file
 
 ```
 cd pietimer_kivy/bin
 sha256sum -c ../SHA256SUMS 
 ```
+
+2. Connect your device and run
+
+`adb devices`
+
+3. With the reported name (e.g. XXXX) run
+
+`adb -s XXXX install YYYY.apk `
+
+where XXXX is your android device and YYYY is the apk binary. 
+
+4. (debugging) If you want to see the logs run 
+
+`adb -s XXXX logcat *:S python:D`
+
 
 # Directions
 
