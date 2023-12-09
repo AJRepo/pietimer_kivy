@@ -3,6 +3,7 @@ A pie timer in python and kivy, based on ajrepo/countdowntimer
 
 # Usage: 
 
+```
 python3 src/main.py [KIVY OPTION...] [-- PROGRAM OPTIONS]
 
 Arguments:
@@ -20,7 +21,7 @@ Arguments:
   [-t or --terminal_beep] Execute a beep at t=0  (not implemented yet in this version)
   [-x <#xwidth>] [--x_size=<#xwidth>]
   [-y <#yheight>] [--y_size=<#yheight>]
-
+```
 
 If the -q or --quiet flag is set then don't print anything on the command line, otherwise print a countdown also.
 
