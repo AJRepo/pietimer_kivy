@@ -69,8 +69,10 @@ class AnalogClockFace(FloatLayout): #pylint: disable=too-many-instance-attribute
             clock_features = {'initialized': False, 'debug': False}
         self.running = True
         self.seconds_left = 0.0   #could be a fraction of a second
+        self.start_seconds = 0.0   #could be a fraction of a second
         self.countdown = True
         self.clock_interval = .1
+        self.repeat = 0
         #clockface clock_widgets (numbers around edge)
         self.clock_widgets = {}
         self.top_opacity = 0
@@ -96,6 +98,7 @@ class AnalogClockFace(FloatLayout): #pylint: disable=too-many-instance-attribute
 
         if clock_features['initialized'] is True:
             PieTimer.set_start_seconds(self)
+            self.repeat = self.clock_features['total_repeat']
             if self.clock_features['debug'] is True:
                 print(f"XWIDTH NOW = {clock_features['initialized']}")
             #add_clock_numbers: puts a series of numbers around the clock/pie
@@ -134,6 +137,12 @@ class AnalogClockFace(FloatLayout): #pylint: disable=too-many-instance-attribute
             # Alternatively set event_run = Clock...
             #     and then to stop use event_run.cancel() or Clock.unschedule(event_run)
 
+    #def on_size(self, *args):
+    #    """Todo: Unused: change stuff on resizing window"""
+    #    print(args)
+    #    radius = 0.4*min(Window.width,Window.height)/2
+    #    self.pie_timeleft_widget.pos = (self.center_x - radius, self.center_y - radius)
+
     def set_new_time(self, widget):  #pylint: disable=unused-argument
         """If user updates any hr,min,sec update seconds left"""
         try:
@@ -145,6 +154,7 @@ class AnalogClockFace(FloatLayout): #pylint: disable=too-many-instance-attribute
             #print("not an int")
             self.ids['"hrs_top"'].text = "00"
 
+        self.start_seconds = self.seconds_left
         self.adjust_pie()
 
         if self.clock_features['debug'] is True:
@@ -153,6 +163,8 @@ class AnalogClockFace(FloatLayout): #pylint: disable=too-many-instance-attribute
             print(self.ids['"min_top"'].text)
             print(self.ids['"sec_top"'].text)
             print(self.seconds_left)
+            print("===========================")
+            print("START=",self.start_seconds)
 
         #print(widget.parent.parent.parent.ids.obj.ids['"hrs_top"'].text)
         #for id, value in self.ids.items():
@@ -205,7 +217,7 @@ class AnalogClockFace(FloatLayout): #pylint: disable=too-many-instance-attribute
 
     def add_pie(self):
         """This is just debug code at this point to test adding a pie programatically
-            this does not scale as the window is resized
+            this does not scale as the window is resized. See on_size for that. 
         """
 
         print("ADDPIE IDS = ", self.ids)
@@ -219,7 +231,7 @@ class AnalogClockFace(FloatLayout): #pylint: disable=too-many-instance-attribute
             Color(1,1,0)
             diameter = 0.4*min(Window.width,Window.height)
             #diameter = 0.4*self.height
-            Ellipse(
+            self.pie_timeleft_widget = Ellipse(
                    pos=(Window.center[0] - (0.5*diameter), Window.center[1] - 0.5 * diameter),
                    id="centerpie",
                    #pos_hint=(1.5,.5),
@@ -378,10 +390,19 @@ class AnalogClockFace(FloatLayout): #pylint: disable=too-many-instance-attribute
         if self.clock_features['debug'] is True:
             print("DEBUG LAST=", delta_t)
             print("DEBUG LEFT=", self.seconds_left)
+            print("DEBUG REPEAT=", self.repeat)
 
         if self.seconds_left <=0:
             if self.clock_features['debug'] is True:
-                print("ENDING!!!")
+                print("ENDING or REPEATING!!!")
+            #Handle Repeat flag if set
+            self.repeat = self.repeat - 1
+            if self.repeat >= 1:
+                if self.clock_features['debug'] is True:
+                    print("DEBUG REPEAT=", self.repeat)
+                self.seconds_left = self.start_seconds
+                return True
+
             Clock.unschedule(self.runclock)
             sys.exit()
             #  return False will unschedule the clock too
@@ -464,6 +485,7 @@ class PieTimer(App):
         #pylint: disable=too-many-statements
         #setup the defaults
         quiet = 0
+        total_repeat = 0
         term_ppm = 0
         terminal_beep = 0
         debug=False
@@ -480,11 +502,11 @@ class PieTimer(App):
         opts = []
         try:
             opts, _ = getopt.getopt(self.args,
-                                    "bdntqh:m:s:x:y:c:",
+                                    "bdntqh:m:s:x:y:c:r:",
                                     ["terminal_beep", "quiet", "hours=", "minutes=", "seconds=",
                                      "buttons", "x_size=", "y_size=", "color=", "clock_bg_color=",
                                      "display_current_time", "console_only", "term_ppm",
-                                     "display_numeric","debug"]
+                                     "display_numeric","debug","repeat="]
                                    )
         except getopt.GetoptError:
             print("Usage:\n pietimer.py [Arguments]\n")
@@ -500,6 +522,7 @@ class PieTimer(App):
             print("  [-m <#>] [--minutes=<#>]")
             print("  [-n ] [--display_currrent_time]")
             print("  [-s <#>] [--secondss=<#>]")
+            print("  [-r <#> or --repeat <#> ]  Repeat the countdown # times")
             print("  [-q or --quiet]  Do not print time left in terminal")
             print("  [--term_ppm] Print to terminal time left each minute")
             print("  [-t or --terminal_beep] Execute a beep at t=0")
@@ -526,6 +549,8 @@ class PieTimer(App):
                 int_y_size = self.setup_size(arg)
             elif opt == "--console_only":
                 console_only = True
+            elif opt in ("-r", "--repeat"):
+                total_repeat = int(arg)
             elif opt in ("-c", "--color"):
                 time_left_color = arg
             elif opt == "--clock_bg_color":
@@ -554,6 +579,7 @@ class PieTimer(App):
                 'time_left_color': time_left_color,\
                 'clock_bg_color': clock_bg_color,\
                 'buttons': buttons,\
+                'total_repeat': total_repeat,\
                 'dict_time': dict_time,\
                 'exiting': False, \
                 'console_only': console_only, \
@@ -609,12 +635,13 @@ class PieTimer(App):
                         self.clock_features['dict_time']['minutes']*60 + \
                         self.clock_features['dict_time']['seconds']
 
+        self.start_seconds = self.seconds_left
         return self.seconds_left
 
 
 #initiate class and run
 if __name__ == "__main__":
-    __version__ = "1.0.7"
+    __version__ = "1.1.7"
     PieTimer(sys.argv[1:]).run()
     #PieTimer().run()
     sys.exit(0)
