@@ -27,6 +27,12 @@ If the -q or --quiet flag is set then don't print anything on the command line, 
 
 # Installation on Desktop
 
+0. Install prerequisites: python3, kivy and xclip (a kivy requirement)
+
+If you are on a Debian environment you can run
+
+`apt install python3 python3-kivy xclip`
+
 1. Clone the repo
 
 `git clone ... `
