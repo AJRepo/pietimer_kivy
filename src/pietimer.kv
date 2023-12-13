@@ -11,6 +11,25 @@
 #:set pie_radius_factor .74
 AnalogClockFace:
 
+#Template: Used for h,m,s buttons
+<TimerButton@Button>:
+    disabled: True
+    background_normal: ''
+    background_disabled_normal: self.background_normal
+    background_color: (.9,.9,.9,1)
+    font_size: self.width/1.5
+    size: 40,50
+    color: text_color
+#Template: Used for h,m,s TextInputs
+<TimerText@TextInput>:
+    background_normal: ''
+    background_disabled_normal: self.background_normal
+    background_color: (.9,.9,.9,1)
+    font_size: self.width/1.75
+    multiline: False
+    halign: 'center'
+    color: text_color
+    write_tab: False
 
 <AnalogClockFace>:
     id: "CF"
@@ -152,34 +171,15 @@ AnalogClockFace:
             anchor_y: 'center'
             size_hint: text_area_hint #see vars at top of page
             size: 20, root.width/8
-            Button:
+            TimerButton:
                 id: "hrs"
-                disabled: True
                 text: root.str_hours
-                background_normal: ''
-                background_disabled_normal: self.background_normal
-                background_color: (.9,.9,.9,1)
-                font_size: self.width/1.5
-                size: 40,50
-                color: text_color
-            Button:
+            TimerButton:
                 id: "min"
-                disabled: True
                 text: root.str_min
-                background_normal: ''
-                background_disabled_normal: self.background_normal
-                background_color: (.9,.9,.9,1)
-                font_size: self.width/1.5
-                color: text_color
-            Button:
+            TimerButton:
                 id: "sec"
-                disabled: True
                 text: root.str_sec
-                background_normal: ''
-                background_disabled_normal: self.background_normal
-                background_color: (.9,.9,.9,1)
-                font_size: self.width/1.5 #was 26
-                color: text_color
         BoxLayout:
             id: "top_text_boxes"
             anchor_x: 'center'
@@ -193,46 +193,22 @@ AnalogClockFace:
             #    Rectangle:
             #        size: self.size
             #        pos: self.pos
-            TextInput:
+            #See TimerText Template above
+            TimerText:
                 id: "hrs_top"
-                disabled: root.running  #change to True when clock is running
                 text: root.str_hours
-                background_normal: ''
-                background_disabled_normal: self.background_normal
-                background_color: (.9,.9,.9,1)
-                font_size: self.width/1.75
-                multiline: False
-                halign: 'center'
-                color: text_color
+                disabled: root.running  #change to True when clock is running
                 on_text_validate: root.set_new_time(self)
-                write_tab: False
-            TextInput:
+            TimerText:
                 id: "min_top"
-                disabled: root.running
                 text: root.str_min
-                background_normal: ''
-                background_disabled_normal: self.background_normal
-                background_color: (.9,.9,.9,1)
-                font_size: self.width/1.75
-                multiline: False
-                halign: 'center'
-                color: text_color
+                disabled: root.running  #change to True when clock is running
                 on_text_validate: root.set_new_time(self)
-                write_tab: False
-            TextInput:
+            TimerText:
                 id: "sec_top"
-                #disabled: root.running
-                disabled: root.running
                 text: root.str_sec
-                background_normal: ''
-                background_disabled_normal: self.background_normal
-                background_color: (.9,.9,.9,1)
-                font_size: self.width/1.75
-                multiline: False
-                halign: 'center'
-                color: text_color
+                disabled: root.running  #change to True when clock is running
                 on_text_validate: root.set_new_time(self)
-                write_tab: False
 
     AnchorLayout:
         id: "debug_buttons"
