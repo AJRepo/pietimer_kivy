@@ -9,9 +9,11 @@
 #:set my_color [1, .1, .5]
 #:set text_area_hint [.5, None]
 #:set pie_radius_factor .74
+
+#The main interface - must be class name? Only one root objec is allowed by .kv
 AnalogClockFace:
 
-#Template: Used for h,m,s buttons
+#Dynamic Class: Used for h,m,s buttons (Templates Deprecated 1.7 onward)
 <TimerButton@Button>:
     disabled: True
     background_normal: ''
@@ -20,7 +22,7 @@ AnalogClockFace:
     font_size: self.width/1.5
     size: 40,50
     color: text_color
-#Template: Used for h,m,s TextInputs
+#Dynamic Class: Used for h,m,s TextInputs
 <TimerText@TextInput>:
     background_normal: ''
     background_disabled_normal: self.background_normal
@@ -32,7 +34,8 @@ AnalogClockFace:
     write_tab: False
 
 <AnalogClockFace>:
-    id: "CF"
+    #ID's create weak references
+    id: "clock_obj"
     #Don't use both size and size_hint (e.g. set size_hint = None for using size)
     #size: root.x, root.y
     #size_hint: 1,1
@@ -193,7 +196,7 @@ AnalogClockFace:
             #    Rectangle:
             #        size: self.size
             #        pos: self.pos
-            #See TimerText Template above
+            #See TimerText Parent Dynamic Class Above (child class)
             TimerText:
                 id: "hrs_top"
                 text: root.str_hours
