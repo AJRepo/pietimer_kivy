@@ -51,7 +51,7 @@ AnalogClockFace:
             Color:
                 rgb: pie_bg_color
             Ellipse:
-                id: "backgroundpie"
+                group: "back_pie"
                 #pos: self.pos
                 #pos: self.x, self.y
                 #Pos is the lower left corner of the square bounding the ellipse. Ugh.
@@ -68,7 +68,7 @@ AnalogClockFace:
             Color:
                 rgb: timeleft_color
             Ellipse:
-                id: "foregroundpie"
+                group: "fore_pie"
                 #Pos is the lower left corner of the square bounding the ellipse. Ugh.
                 pos: root.width/2 - self.width * pie_radius_factor/2, root.height/2 - self.width * pie_radius_factor/2
                 #pos: self.center_x, self.center_y

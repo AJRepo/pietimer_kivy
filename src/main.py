@@ -184,99 +184,107 @@ class AnalogClockFace(FloatLayout): #pylint: disable=too-many-instance-attribute
             #print("IDSPIE2 = ", self.ids['pie'])
 
 
-        #I guess since the first ellipse is the background and the second is the foreground
-        # we don't need to add them to self.clock_widgets and just do
+        # Kivy Canvas elements are identified by "group" not by "id"
+        self.clock_widgets["back_pie"] = self.ids['"pie"'].canvas.get_group('back_pie')
+        self.clock_widgets["front_pie"] = self.ids['"pie"'].canvas.get_group('fore_pie')
+
+
+        # Obsoleted by above group. Now debugging if you want to iterate
         #   self.ids['"pie"'].canvas.children[0]
-        # but this seems easier to read. Change to use the index if too resource intensive.
-        i = 0
-        found_background_pie = False
+        if self.clock_features['debug'] is True:
+            i = 0
+            found_background_pie = False
 
-        for child in self.ids['"pie"'].canvas.children:
-            if isinstance(child, Color):
-                if self.clock_features['debug'] is True:
-                    print("FOUND COLOR", i, ":", child)
+            for child in self.ids['"pie"'].canvas.children:
+                if isinstance(child, Color):
+                    if self.clock_features['debug'] is True:
+                        print("FOUND COLOR", i, ":", child)
 
-            elif isinstance(child, Ellipse):
-                if found_background_pie:
-                    #self.clock_widgets["front_pie"].append(child)
-                    self.clock_widgets["front_pie"] = [child]
+                elif isinstance(child, Ellipse):
+                    if found_background_pie:
+                        #self.clock_widgets["front_pie"].append(child)
+                        #Obsoleted by group (see above)
+                        #self.clock_widgets["front_pie"] = [child]
+                        print("FOUND ELLIPSE BG", i, ":", child)
+                    else:
+                        #self.clock_widgets["back_pie"].append(child)
+                        #Obsoleted by group (see above)
+                        #self.clock_widgets["back_pie"] = [child]
+                        print("FOUND ELLIPSE BG", i, ":", child)
+
+                    found_background_pie = True
+                    if self.clock_features['debug'] is True:
+                        print("FOUND ELLIPSE", i, ":", child)
+
                 else:
-                    #self.clock_widgets["back_pie"].append(child)
-                    self.clock_widgets["back_pie"] = [child]
-
-                found_background_pie = True
-                if self.clock_features['debug'] is True:
-                    print("FOUND ELLIPSE", i, ":", child)
-
-            else:
-                if self.clock_features['debug'] is True:
-                    print("Found SOMETHING", i, ":", child)
-            i = i + 1
+                    if self.clock_features['debug'] is True:
+                        print("Found SOMETHING", i, ":", child)
+                i = i + 1
 
 
 
-    def add_pie(self):
-        """This is just debug code at this point to test adding a pie programatically
-            this does not scale as the window is resized. See on_size for that. 
-        """
-
-        print("ADDPIE IDS = ", self.ids)
-        for key, val in self.ids.items():
-            print(f"key={key}: val={val}")
-            print(f"VALWIDTH = {val.width}")
-
-        Window.clearcolor = (0,0,0,0)
-        #with self.canvas:
-        with self.ids['"pie"'].canvas:
-            Color(1,1,0)
-            diameter = 0.4*min(Window.width,Window.height)
-            #diameter = 0.4*self.height
-            self.pie_timeleft_widget = Ellipse(
-                   pos=(Window.center[0] - (0.5*diameter), Window.center[1] - 0.5 * diameter),
-                   id="centerpie",
-                   #pos_hint=(1.5,.5),
-                   #size=(.75*self.width,.75*self.height),
-                   #pos_hint=(2,3),
-                   size=(diameter, diameter),
-                   angle_start=0,
-                   angle_end=180
-                   )
-            print("In Canvas WIDTH_HINT=", self.size_hint_x)
-            print("In Canvas SELF_WIDTH=",self.width)
-            print("WINDOW_HEIGHT=",Window.height)
-            #print("WIDTH=",rooti#.width)
-            print("In Canvas CENTER=",self.center_x)
-            print(self.pos_hint)
-            #self.canvas.clear()
-
-            #Color(colormap['yellow'])
-
-        #print("bbbbbbbbbbbbbbbbbbbbbb")
-        #print("Out Canvas WIDTH_HINT=", self.size_hint_x)
-        #print("Out Canvas SELF_WIDTH=",self.width)
-        #print("WINDOW_HEIGHT=",Window.height)
-        #print("Out Canvas CENTER=",self.center_x)
-        #print(self.pos_hint)
-        #self.canvas.clear()
-
-        #print(self.newpie.canvas.children)
-
-        #c = FloatLayout()
-        #c.size_hint = (1,1)
-
-
-        #TESTING1 deleting one label/widget
-        for label in self.clock_widgets["numbers"]:
-            if label.text == "30":
-                self.remove_widget(label)
-        #END TESTING1
-
-        #DEBUG1: Testing adding string
-        ajostring = str("X_size = " + str(self.clock_features['x_size']))
-        b_var = Label(text=ajostring)
-        b_var.pos = ["40dp","40dp"]
-        self.add_widget(b_var)
-        #END DEBUG1
+#    def add_pie(self):
+#        """This is just debug code at this point to test adding a pie programatically
+#            this does not scale as the window is resized. See on_size for that.
+#        """
+#
+#        print("ADDPIE IDS = ", self.ids)
+#        for key, val in self.ids.items():
+#            print(f"key={key}: val={val}")
+#            print(f"VALWIDTH = {val.width}")
+#
+#        Window.clearcolor = (0,0,0,0)
+#        #with self.canvas:
+#        with self.ids['"pie"'].canvas:
+#            Color(1,1,0)
+#            diameter = 0.4*min(Window.width,Window.height)
+#            #diameter = 0.4*self.height
+#            Ellipse(
+#                   pos=(Window.center[0] - (0.5*diameter), Window.center[1] - 0.5 * diameter),
+#                   id="centerpie",
+#                   #pos_hint=(1.5,.5),
+#                   #size=(.75*self.width,.75*self.height),
+#                   #pos_hint=(2,3),
+#                   size=(diameter, diameter),
+#                   angle_start=0,
+#                   angle_end=180
+#                   )
+#            print("In Canvas WIDTH_HINT=", self.size_hint_x)
+#            print("In Canvas SELF_WIDTH=",self.width)
+#            print("WINDOW_HEIGHT=",Window.height)
+#            #print("WIDTH=",rooti#.width)
+#            print("In Canvas CENTER=",self.center_x)
+#            print(self.pos_hint)
+#            #self.canvas.clear()
+#
+#            #Color(colormap['yellow'])
+#
+#        #print("bbbbbbbbbbbbbbbbbbbbbb")
+#        #print("Out Canvas WIDTH_HINT=", self.size_hint_x)
+#        #print("Out Canvas SELF_WIDTH=",self.width)
+#        #print("WINDOW_HEIGHT=",Window.height)
+#        #print("Out Canvas CENTER=",self.center_x)
+#        #print(self.pos_hint)
+#        #self.canvas.clear()
+#
+#        #print(self.newpie.canvas.children)
+#
+#        #c = FloatLayout()
+#        #c.size_hint = (1,1)
+#
+#
+#        #TESTING1 deleting one label/widget
+#        for label in self.clock_widgets["numbers"]:
+#            if label.text == "30":
+#                self.remove_widget(label)
+#        #END TESTING1
+#
+#        #DEBUG1: Testing adding string
+#        ajostring = str("X_size = " + str(self.clock_features['x_size']))
+#        b_var = Label(text=ajostring)
+#        b_var.pos = ["40dp","40dp"]
+#        self.add_widget(b_var)
+#        #END DEBUG1
 
     def adjust_pie(self):
         """Modify the outer angle"""
