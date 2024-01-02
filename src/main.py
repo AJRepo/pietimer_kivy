@@ -25,8 +25,10 @@ from kivy.app import App
 from kivy.clock import Clock
 #from kivy.uix.label import Label
 #from kivy.uix.widget import Widget
+from kivy.uix.pagelayout import PageLayout
 from kivy.uix.floatlayout import FloatLayout
-#from kivy.uix.textinput import TextInput
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.textinput import TextInput
 #from kivy.utils import colormap
 from kivy.graphics import Color, Ellipse
 #from kivy.properties import DictProperty, BooleanProperty
@@ -254,8 +256,38 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
 
     def build(self):
         """Pietimer. This is the last setup of the app. All stuff modifying wigets overridden"""
+        page_layout = PageLayout()
+        box_layout_txt = BoxLayout()
+        #create a pie timer widget and addit to the first page
         self.acf_object = AnalogClockFace(clock_features=self.clock_features)
-        return self.acf_object
+        page_layout.add_widget(self.acf_object)
+        # Create stuff and add it to a second PageLayout Page
+        textin_h = TextInput(text=self.acf_object.str_hours,  #HOW TO BIND text to str_hours????
+                            font_size=Window.width/6,
+                            multiline=False,
+                            halign="center",
+                            write_tab=False
+                    )
+        textin_m = TextInput(text=self.acf_object.str_min,
+                            font_size=Window.width/6,
+                            multiline=False,
+                            halign="center",
+                            write_tab=False
+                    )
+        textin_s = TextInput(text=self.acf_object.str_sec,
+                            font_size=Window.width/6,
+                            multiline=False,
+                            halign="center",
+                            write_tab=False
+                    )
+        box_layout_txt.add_widget(textin_h)
+        box_layout_txt.add_widget(textin_m)
+        box_layout_txt.add_widget(textin_s)
+        page_layout.add_widget(box_layout_txt)
+
+        #return this entire thing
+        return page_layout
+        #return self.acf_object
         #b = Label(text="2")
         #self.add_widget(b)
         #return Label(text="Code Button!!!")
