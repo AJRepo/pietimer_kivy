@@ -268,13 +268,14 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
                             halign="center",
                             write_tab=False
                     )
-        textin_m = TextInput(text=self.acf_object.str_min,
+        #both self. and app. give accurate time, but does not change. Binding? 
+        textin_m = TextInput(text=app.acf_object.str_min,
                             font_size=Window.width/6,
                             multiline=False,
                             halign="center",
                             write_tab=False
                     )
-        textin_s = TextInput(text=self.acf_object.str_sec,
+        textin_s = TextInput(text=app.acf_object.str_sec,
                             font_size=Window.width/6,
                             multiline=False,
                             halign="center",
