@@ -25,7 +25,9 @@ from kivy.app import App
 from kivy.clock import Clock
 #from kivy.uix.label import Label
 #from kivy.uix.widget import Widget
+from kivy.uix.pagelayout import PageLayout
 from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.boxlayout import BoxLayout
 #from kivy.uix.textinput import TextInput
 #from kivy.utils import colormap
 from kivy.graphics import Color, Ellipse
@@ -43,6 +45,16 @@ if platform == 'linux':
 #Uncomment the below to get NO messages at all from Kivy to the console
 #os.environ["KIVY_NO_CONSOLELOG"] = "1"
 
+class TimerPager(PageLayout):
+    """See .kv file for details"""
+    def __init__(self, clock_features=None, **kwargs):
+        super().__init__(**kwargs)
+        ##the above is the same as super(AnalogClockFace,self)....
+        print(clock_features)
+        self.str_hours = "0h"
+        self.add_widget(AnalogClockFace(clock_features=clock_features))
+class PageControls(BoxLayout): # pylint: disable=too-few-public-methods
+    """Kivy requires defining args passed in before init"""
 
 class AnalogClockFace(FloatLayout): #pylint: disable=too-many-instance-attributes
     """Kivy requires defining args passed in before init"""
@@ -189,6 +201,7 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
     """PieTimer Child Class of App Parent class
     """
     acf_object = ObjectProperty(None)
+    pager_layout = ObjectProperty(None)
     str_hours = StringProperty("0a")
     str_min = StringProperty("0b")
     str_sec = StringProperty("0c")
@@ -260,7 +273,9 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
 
     def build(self):
         """Pietimer. This is the last setup of the app. All stuff modifying wigets overridden"""
+        self.pager_layout = TimerPager(clock_features=self.clock_features)
         self.acf_object = AnalogClockFace(clock_features=self.clock_features)
+        #return self.pager_layout
         return self.acf_object
         #b = Label(text="2")
         #self.add_widget(b)

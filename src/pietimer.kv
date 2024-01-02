@@ -11,7 +11,7 @@
 #:set pie_radius_factor .74
 
 #The main interface - must be class name? Only one root objec is allowed by .kv
-AnalogClockFace:
+TimerPager:
 
 #Dynamic Class: Used for h,m,s buttons (Templates Deprecated 1.7 onward)
 <TimerButton@Button>:
@@ -19,7 +19,8 @@ AnalogClockFace:
     background_normal: ''
     background_disabled_normal: self.background_normal
     background_color: (.9,.9,.9,1)
-    font_size: self.width/1.5
+    #font_size: self.width/1.5
+    font_size: '22sp'
     size: 40,50
     color: text_color
 #Dynamic Class: Used for h,m,s TextInputs
@@ -27,15 +28,41 @@ AnalogClockFace:
     background_normal: ''
     background_disabled_normal: self.background_normal
     background_color: (.9,.9,.9,1)
-    font_size: self.width/1.75
+    #font_size: self.width/1.75
+    font_size: '22sp'
     multiline: False
     halign: 'center'
     color: text_color
     write_tab: False
 
+<TimerPager>
+    AnalogClockFace:
+    BoxLayout:
+        orientation: 'vertical'
+        PageControls:
+            size_hint: 1,None
+            size: 20, 50 
+        Button:
+            size_hint: .25, .25
+            text: "stop"
+
+<PageControls>
+    id: page_controls
+    #size: 20, root.width/8
+    TimerText:
+        id: pc_hours
+        text: app.str_hours
+    TimerText:
+        id: pc_min
+        text: app.str_min
+    TimerText:
+        id: pc_sec
+        text: app.str_sec
+
 <AnalogClockFace>:
     #ID's create weak references
     id: "clock_obj"
+    name: "clock_pie"
     #Don't use both size and size_hint (e.g. set size_hint = None for using size)
     #size: root.x, root.y
     #size_hint: 1,1
@@ -201,7 +228,6 @@ AnalogClockFace:
                 id: "hrs_top"
                 text: app.str_hours
                 disabled: app.running  #change to True when clock is running
-                #disabled: False  #change to True when clock is running
                 on_text_validate: app.set_new_time(self)
             TimerText:
                 id: "min_top"
