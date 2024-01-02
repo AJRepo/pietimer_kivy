@@ -23,13 +23,14 @@ from kivy.utils import platform
 from kivy.config import Config
 from kivy.app import App
 from kivy.clock import Clock
-from kivy.uix.label import Label
+#from kivy.uix.label import Label
 #from kivy.uix.widget import Widget
 from kivy.uix.floatlayout import FloatLayout
 #from kivy.uix.textinput import TextInput
 #from kivy.utils import colormap
 from kivy.graphics import Color, Ellipse
 #from kivy.properties import DictProperty, BooleanProperty
+from kivy.properties import ObjectProperty #pylint: disable=no-name-in-module
 from kivy.properties import NumericProperty #pylint: disable=no-name-in-module
 from kivy.properties import StringProperty, BooleanProperty #pylint: disable=no-name-in-module
 from kivy.core.window import Window
@@ -57,6 +58,7 @@ class AnalogClockFace(FloatLayout): #pylint: disable=too-many-instance-attribute
     str_sec = StringProperty("00")
     running = BooleanProperty(True)
     top_opacity = NumericProperty(0)
+    f_angle_end = NumericProperty(275)
     ajotest = NumericProperty(Window.width)
 
     #for using .kv file
@@ -76,6 +78,7 @@ class AnalogClockFace(FloatLayout): #pylint: disable=too-many-instance-attribute
         #clockface clock_widgets (numbers around edge)
         self.clock_widgets = {}
         self.top_opacity = 0
+        self.f_angle_end = 275
         self.ajotest = Window.width
         if platform == 'linux':
             Window.always_on_top = True
@@ -107,11 +110,7 @@ class AnalogClockFace(FloatLayout): #pylint: disable=too-many-instance-attribute
             #  self.add_clock_numbers(4)
             #  self.add_clock_numbers(10)
 
-            #THIS HAS BEEN COMMENTED OUT AND REPLACED IN .KV FILE
-            #self.add_clock_numbers(12)
-
             self.define_pie_widgets()
-            self.adjust_pie()
 
             #Note: Changed from calling the widget to a StringProperty
             #self.ids['"hrs"'].text =
@@ -123,56 +122,12 @@ class AnalogClockFace(FloatLayout): #pylint: disable=too-many-instance-attribute
             #self.ids['"sec"'].text =
             self.str_sec = str(round(self.seconds_left)%60)
 
-            #self.add_pie()
-
-            #run this until it returns False
-            if self.clock_features['debug'] is True:
-                self.clock_interval = 1
-            self.myclock = Clock.schedule_interval(self.runclock, self.clock_interval)
-
-            #can we change the interval to be 1 sec if sec_left>60?
-
-            if clock_features['debug'] is True:
-                print("DEBUG: RIGHT AFTER Clock.schedule------------")
-            # Alternatively set event_run = Clock...
-            #     and then to stop use event_run.cancel() or Clock.unschedule(event_run)
 
     #def on_size(self, *args):
     #    """Todo: Unused: change stuff on resizing window"""
     #    print(args)
     #    radius = 0.4*min(Window.width,Window.height)/2
     #    self.pie_timeleft_widget.pos = (self.center_x - radius, self.center_y - radius)
-
-    def set_new_time(self, widget):  #pylint: disable=unused-argument
-        """If user updates any hr,min,sec update seconds left"""
-        try:
-            self.seconds_left = int(self.ids['"sec_top"'].text) + \
-                60*int(self.ids['"min_top"'].text) + \
-                3600*int(self.ids['"hrs_top"'].text)
-        except (TypeError, ValueError):
-            #do nothing
-            #print("not an int")
-            self.ids['"hrs_top"'].text = "00"
-
-        self.start_seconds = self.seconds_left
-        self.adjust_pie()
-
-        if self.clock_features['debug'] is True:
-            print(self.ids)
-            print(self.ids['"hrs_top"'].text)
-            print(self.ids['"min_top"'].text)
-            print(self.ids['"sec_top"'].text)
-            print(self.seconds_left)
-            print("===========================")
-            print("START=",self.start_seconds)
-
-        #print(widget.parent.parent.parent.ids.obj.ids['"hrs_top"'].text)
-        #for id, value in self.ids.items():
-        #    if value.__self__ == widget:
-        #        print(f"ID={id}")
-        #    else:
-        #        print(f"NOT={id}")
-        #PieTimer.set_start_seconds(self)
 
     def define_pie_widgets(self):
         """Setup the dict of elipses (self.clock_widgets) to identify for operations later"""
@@ -223,218 +178,28 @@ class AnalogClockFace(FloatLayout): #pylint: disable=too-many-instance-attribute
 
 
 
-#    def add_pie(self):
-#        """This is just debug code at this point to test adding a pie programatically
-#            this does not scale as the window is resized. See on_size for that.
-#        """
-#
-#        print("ADDPIE IDS = ", self.ids)
-#        for key, val in self.ids.items():
-#            print(f"key={key}: val={val}")
-#            print(f"VALWIDTH = {val.width}")
-#
-#        Window.clearcolor = (0,0,0,0)
-#        #with self.canvas:
-#        with self.ids['"pie"'].canvas:
-#            Color(1,1,0)
-#            diameter = 0.4*min(Window.width,Window.height)
-#            #diameter = 0.4*self.height
-#            Ellipse(
-#                   pos=(Window.center[0] - (0.5*diameter), Window.center[1] - 0.5 * diameter),
-#                   id="centerpie",
-#                   #pos_hint=(1.5,.5),
-#                   #size=(.75*self.width,.75*self.height),
-#                   #pos_hint=(2,3),
-#                   size=(diameter, diameter),
-#                   angle_start=0,
-#                   angle_end=180
-#                   )
-#            print("In Canvas WIDTH_HINT=", self.size_hint_x)
-#            print("In Canvas SELF_WIDTH=",self.width)
-#            print("WINDOW_HEIGHT=",Window.height)
-#            #print("WIDTH=",rooti#.width)
-#            print("In Canvas CENTER=",self.center_x)
-#            print(self.pos_hint)
-#            #self.canvas.clear()
-#
-#            #Color(colormap['yellow'])
-#
-#        #print("bbbbbbbbbbbbbbbbbbbbbb")
-#        #print("Out Canvas WIDTH_HINT=", self.size_hint_x)
-#        #print("Out Canvas SELF_WIDTH=",self.width)
-#        #print("WINDOW_HEIGHT=",Window.height)
-#        #print("Out Canvas CENTER=",self.center_x)
-#        #print(self.pos_hint)
-#        #self.canvas.clear()
-#
-#        #print(self.newpie.canvas.children)
-#
-#        #c = FloatLayout()
-#        #c.size_hint = (1,1)
-#
-#
-#        #TESTING1 deleting one label/widget
-#        for label in self.clock_widgets["numbers"]:
-#            if label.text == "30":
-#                self.remove_widget(label)
-#        #END TESTING1
-#
-#        #DEBUG1: Testing adding string
-#        ajostring = str("X_size = " + str(self.clock_features['x_size']))
-#        b_var = Label(text=ajostring)
-#        b_var.pos = ["40dp","40dp"]
-#        self.add_widget(b_var)
-#        #END DEBUG1
-
-    def adjust_pie(self):
-        """Modify the outer angle"""
-        fraction_left = PieTimer.fraction_left(self)
-        #print("FRACTION_LEFT=", fraction_left)
-
-        self.clock_widgets["front_pie"][0].angle_end = fraction_left * 360
-
     def update_clock_numbers(self,label,angle):
         """Unused: This is a failed attempt to get the numbers to resize with the window"""
         pie_radius_factor = .74
         label.pos = (Window.width / 2 * (1 + 1.1 * pie_radius_factor * math.sin (angle)),
                 Window.height / 2 + 1.1 * pie_radius_factor * (Window.width / 2) * math.cos (angle))
 
-    def add_clock_numbers(self, total_num=20):
-        """Add Lables for Clock Numbers"""
-        self.clock_widgets["numbers"] = []
-        if total_num < 0:
-            print("Can't have count of clock numbers < 0")
-            sys.exit()
-        slices=60/total_num
-        for i in range(0, total_num):
-            this_angle = 2 * math.pi * i / total_num
-            number = Label(
-                text=str(int(i*slices)),
-                font_size="20dp",
-                bold=False,
-                color=(.3, .6, .7, 1),
-                ##    # pos_hint is a fraction in range (0, 1)
-                ##    # this is designed to be used with size_hint: 1,1 (see .kv file)
-                #pos_hint={
-                #    "center_x": .5 + .43*math.sin(this_angle),
-                #    "center_y": .5 + .43*math.cos(this_angle),
-                #}
-                pos=(
-                    (Window.width/2 * (math.sin(this_angle))) \
-                        - 10 * (math.sin(this_angle)) ,
-                    (Window.width/2 * (math.cos(this_angle))),
-                )
-            )
-            #print(f"'center_x': {.5 + .43*math.sin(this_angle)}")
-            #print(f"'center_y': {.5 + .43*math.cos(this_angle)}")
-            #keep a dict of widgets for use later
-            self.clock_widgets["numbers"].append(number)
 
-            #The following line has been replaced with the code line below it.
-            #self.add_widget(number)
-            #This replaces the line above. add the label widget to the float layout with id="pie"
-            self.ids['"pie"'].add_widget(number)
-
-            #TEST: numbers to resize with window resizing. See function update_clock_numers (failed)
-            #Window.bind(size=lambda instance, value: self.update_clock_numbers(number,this_angle))
-            #self.ids["face"].add_widget(number)
-
-
-    def toggle_running(self, widget):
-        """Toggle self.running variable here in widget and in App"""
-        if self.running:
-            self.running = False
-            self.myclock.cancel()
-            self.top_opacity = 1
-            widget.text = " Start "
-        else:
-            self.running = True
-            self.top_opacity = 0
-            widget.text = " Stop  "
-            self.myclock = Clock.schedule_interval(self.runclock, self.clock_interval)
-
-
-    def print_debug(self, widget):
-        """Print debug code"""
-        print("DEBUG: Clockface Running State", self.running)
-        print("DEBUG: self: ", self.canvas)
-        print("WIDGET=", widget)
-        print("CLOCK_FEATURES=", self.clock_features)
-        #perhaps change this to a toggle button
-        #if self.clock_features['debug'] is False:
-        #    self.clock_features['debug'] = 'True'
-        #else:
-        #    self.clock_features['debug'] = False
-
-
-    def runclock(self,delta_t=0):
-        """When called by Clock.asdf it takes two arguments
-        """
-
-        round_seconds_left = round(self.seconds_left, 0)
-
-
-        if self.running is True:
-            if self.countdown is True:
-                self.seconds_left = self.seconds_left - delta_t
-                #print("DEBUG: ----------RUNNING DOWN")
-                #Note: Changed from calling the widget to a StringProperty
-                #self.ids['"hrs"'].text =
-                self.str_hours = str(int((round_seconds_left/3600)%24)).rjust(2,"0")
-                #self.ids['"min"'].text =
-                self.str_min = str(int((round_seconds_left/60)%60)).rjust(2,"0")
-                #self.ids['"sec"'].text =
-                self.str_sec = str(int(round_seconds_left%60)).rjust(2,"0")
-
-                if self.clock_features['term_ppm'] == 1 \
-                   and abs(round_seconds_left - self.seconds_left) < .1:
-                    print(f"{round_seconds_left} seconds left")
-
-                self.adjust_pie()
-            else:
-                self.seconds_left = self.seconds_left + delta_t
-                #print("DEBUG: +++++++++++RUNNING UP")
-
-        if self.clock_features['debug'] is True:
-            print("DEBUG LAST=", delta_t)
-            print("DEBUG LEFT=", self.seconds_left)
-            print("DEBUG REPEAT=", self.repeat)
-
-        if self.seconds_left <=0:
-            if self.clock_features['debug'] is True:
-                print("ENDING or REPEATING!!!")
-            #Handle Repeat flag if set
-            self.repeat = self.repeat - 1
-            if self.repeat >= 1:
-                if self.clock_features['debug'] is True:
-                    print("DEBUG REPEAT=", self.repeat)
-                self.seconds_left = self.start_seconds
-                return True
-
-            Clock.unschedule(self.runclock)
-            sys.exit()
-            #  return False will unschedule the clock too
-            #  terminate the program
-
-        return True
-
-        #not >= 0 because we don't want @0 to execute
-
-        #when get to 0 unschedule the Clock event by returning False
-        #return False
-
-
-
-class PieTimer(App):
+class PieTimer(App): #pylint: disable=too-many-instance-attributes
     """PieTimer Child Class of App Parent class
     """
+    acf_object = ObjectProperty(None)
     def __init__(self, sys_args, **kwargs):
         super().__init__(**kwargs)
         self.args = sys_args
-        self.running = True
-        self.seconds_left = 0  #Not int. Could be fractions of a second
 
         self.clock_features = self.setup_args()
+        self.running = True
+        self.seconds_left = 0.0   #could be a fraction of a second
+        self.start_seconds = 0.0   #could be a fraction of a second
+        self.countdown = True
+        self.clock_interval = .1
+        self.repeat = 0
 
         #this sets the variable self.seconds_left based on what is returned by setup_args
         self.set_start_seconds()
@@ -466,6 +231,17 @@ class PieTimer(App):
         else:
             Window.size = (self.clock_features['x_size'], self.clock_features['y_size'])
 
+         #run this until it returns False
+        if self.clock_features['debug'] is True:
+            self.clock_interval = 1
+        self.myclock = Clock.schedule_interval(self.runclock, self.clock_interval)
+
+        #can we change the interval to be 1 sec if sec_left>60?
+
+        if self.clock_features['debug'] is True:
+            print("DEBUG: RIGHT AFTER Clock.schedule------------")
+        # Alternatively set event_run = Clock...
+        #     and then to stop use event_run.cancel() or Clock.unschedule(event_run)
 
 
 
@@ -477,8 +253,9 @@ class PieTimer(App):
 
 
     def build(self):
-        """This is the last setup of the app. All stuff modifying wigets overridden"""
-        return AnalogClockFace(clock_features=self.clock_features)
+        """Pietimer. This is the last setup of the app. All stuff modifying wigets overridden"""
+        self.acf_object = AnalogClockFace(clock_features=self.clock_features)
+        return self.acf_object
         #b = Label(text="2")
         #self.add_widget(b)
         #return Label(text="Code Button!!!")
@@ -487,7 +264,7 @@ class PieTimer(App):
 
     # pylint: disable=too-many-locals
     def setup_args(self):
-        """Setup parameters from command line"""
+        """Pietimer. Setup parameters from command line"""
         # There are that many command line options (branches, statements)
         #pylint: disable=too-many-branches
         #pylint: disable=too-many-statements
@@ -598,7 +375,7 @@ class PieTimer(App):
                }
 
     def default_size_check(self, int_size, other_axis):
-        """setup Default window size if size not set"""
+        """Pietimer. setup Default window size if size not set"""
         #
         if int_size <= 0 < other_axis:
             int_size = other_axis
@@ -607,7 +384,7 @@ class PieTimer(App):
         return int_size
 
     def setup_size(self, size_arg):
-        """Setup size of window for program"""
+        """Pietimer. Setup size of window for program"""
         if size_arg == '%':
             width_px = .5 * self.root_window.winfo_screenwidth()
             int_size = int(width_px)
@@ -615,8 +392,18 @@ class PieTimer(App):
             int_size = int(size_arg)
         return int_size
 
+    def adjust_pie(self):
+        """Pietimer. Modify the outer angle"""
+        #fraction_left = self.fraction_left()
+        #print("FRACTION_LEFT=", fraction_left)
+
+        #Note: front_pie is .py, fore_pie is .kv
+        #self.acf_object.clock_widgets["front_pie"][0].angle_end = self.fraction_left() * 360
+        self.acf_object.f_angle_end = self.fraction_left() * 360
+        #print("front_pie=", self.acf_object.clock_widgets["front_pie"][0].angle_end )
+
     def fraction_left(self):
-        """Calculate fraction of clock to display as time left"""
+        """Pietimer. Calculate fraction of clock to display as time left"""
         if self.seconds_left <= 60:
             fraction_left = self.seconds_left/60
         else:
@@ -628,7 +415,7 @@ class PieTimer(App):
         return fraction_left
 
     def set_start_seconds(self):
-        """Convert start time parameters to seconds"""
+        """Pietimer. Convert start time parameters to seconds"""
 
         if self.clock_features['debug'] is True:
             print("IN: set_start_seconds: ", self.clock_features)
@@ -646,12 +433,135 @@ class PieTimer(App):
         self.start_seconds = self.seconds_left
         return self.seconds_left
 
+    def runclock(self,delta_t=0):
+        """Pietimer. When called by Clock.asdf it takes two arguments
+        """
+
+        round_seconds_left = round(self.seconds_left, 0)
+
+
+        if self.running is True:
+            if self.countdown is True:
+                self.seconds_left = self.seconds_left - delta_t
+                #print("DEBUG: ----------RUNNING DOWN")
+                #Note: Changed from calling the widget to a StringProperty
+                #self.ids['"hrs"'].text =
+                self.acf_object.str_hours = str(int((round_seconds_left/3600)%24)).rjust(2,"0")
+                #self.ids['"min"'].text =
+                self.acf_object.str_min = str(int((round_seconds_left/60)%60)).rjust(2,"0")
+                #self.ids['"sec"'].text =
+                self.acf_object.str_sec = str(int(round_seconds_left%60)).rjust(2,"0")
+
+                if self.clock_features['term_ppm'] == 1 \
+                   and abs(round_seconds_left - self.seconds_left) < .1:
+                    print(f"{round_seconds_left} seconds left")
+
+                self.adjust_pie()
+            else:
+                #To Do: count up feature
+                self.seconds_left = self.seconds_left + delta_t
+                #print("DEBUG: +++++++++++RUNNING UP")
+
+        if self.clock_features['debug'] is True:
+            print("DEBUG LAST=", delta_t)
+            print("DEBUG LEFT=", self.seconds_left)
+            print("DEBUG REPEAT=", self.repeat)
+            print("DEBUG self.RUNNING=", self.running)
+
+        if self.seconds_left <=0:
+            if self.clock_features['debug'] is True:
+                print("ENDING or REPEATING!!!")
+            #Handle Repeat flag if set
+            self.repeat = self.repeat - 1
+            if self.repeat >= 1:
+                if self.clock_features['debug'] is True:
+                    print("DEBUG REPEAT=", self.repeat)
+                self.seconds_left = self.start_seconds
+                return True
+
+            Clock.unschedule(self.runclock)
+            sys.exit()
+            #  return False will unschedule the clock too
+            #  terminate the program
+
+        return True
+
+        #not >= 0 because we don't want @0 to execute
+
+        #when get to 0 unschedule the Clock event by returning False
+        #return False
+
+    def toggle_running(self, widget):
+        """Pietimer. Toggle self.running variable here in widget and in App"""
+        #acf_object is the class, top_opacity is the numeric property
+        if self.running:
+            self.running = False
+            self.acf_object.running = False
+            self.myclock.cancel()
+            self.acf_object.top_opacity = 1
+            widget.text = " Start "
+        else:
+            self.running = True
+            self.acf_object.running = True
+            self.acf_object.top_opacity = 0
+            widget.text = " Stop  "
+            self.myclock = Clock.schedule_interval(self.runclock, self.clock_interval)
+
+    def set_new_time(self, widget):  #pylint: disable=unused-argument
+        """Pietimer. If user updates any hr,min,sec update seconds left"""
+        try:
+            self.seconds_left = int(self.acf_object.ids['"sec_top"'].text) + \
+                60*int(self.acf_object.ids['"min_top"'].text) + \
+                3600*int(self.acf_object.ids['"hrs_top"'].text)
+            #self.seconds_left = int(widget.text) + \
+            #    60*int(widget.text) + \
+            #    3600*int(widget.text)
+        except (TypeError, ValueError):
+            #do nothing
+            #print("not an int")
+            self.acf_object.ids['"hrs_top"'].text = "00"
+
+        self.start_seconds = self.seconds_left
+        self.adjust_pie()
+
+        if self.clock_features['debug'] is True:
+            print("IDS=",self.acf_object.ids)
+            print("HRS=",self.acf_object.ids['"hrs_top"'].text)
+            print(self.acf_object.ids['"min_top"'].text)
+            print(self.acf_object.ids['"sec_top"'].text)
+            print(self.seconds_left)
+            print("===========================")
+            print("START=",self.start_seconds)
+
+        #print(widget.parent.parent.parent.ids.obj.ids['"hrs_top"'].text)
+        #for id, value in self.ids.items():
+        #    if value.__self__ == widget:
+        #        print(f"ID={id}")
+        #    else:
+        #        print(f"NOT={id}")
+        #PieTimer.set_start_seconds(self)
+
+    def print_debug(self, widget):
+        """Pietimer. Print debug code"""
+        print("DEBUG: App State", self.running)
+        print("DEBUG: acf_object: ", self.acf_object.running)
+        print("DEBUG: self: ", self.acf_object.canvas)
+        print("WIDGET=", widget)
+        print("CLOCK_FEATURES=", self.clock_features)
+        #perhaps change this to a toggle button
+        #if self.clock_features['debug'] is False:
+        #    self.clock_features['debug'] = 'True'
+        #else:
+        #    self.clock_features['debug'] = False
+
+
 
 #initiate class and run
 if __name__ == "__main__":
     __version__ = "1.1.7"
-    PieTimer(sys.argv[1:]).run()
-    #PieTimer().run()
+    #Use variable app so we can call it from .kv file
+    app = PieTimer(sys.argv[1:])
+    app.run()
     sys.exit(0)
 
 # vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
