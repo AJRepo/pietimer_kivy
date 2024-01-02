@@ -535,6 +535,30 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
 
     def set_new_time(self, widget):  #pylint: disable=unused-argument
         """Pietimer. If user updates any hr,min,sec update seconds left"""
+        if self.clock_features['debug'] is True:
+            print("set_new_time: SELF=", self)
+            print("set_new_time: WIDGET=", widget)
+            print("set_new_time: WIDGET.text=", widget.text)
+            print("set_new_time: WIDGET.multiline=", widget.multiline)
+            print("set_new_time: WIDGET.name=", widget.name)
+            print("set_new_time: WIDGET.id=", widget.ids)
+            print("set_new_time: WIDGET.parent.id=", widget.parent.ids)
+            print("APP HRS=", app.str_hours)
+            print("APP MIN=", app.str_min)
+            print("APP SEC=", app.str_sec)
+            #for foobar, value in widget:
+            #    print(f"FOOBAR={foobar}")
+            #    print(f"VALUE={value}")
+        if widget.name == "hrs_tt":
+            self.str_hours = widget.text
+            self.acf_object.ids['"hrs_top"'].text = widget.text
+        if widget.name == "min_tt":
+            self.str_min = widget.text
+            self.acf_object.ids['"min_top"'].text = widget.text
+        if widget.name == "sec_tt":
+            self.str_sec = widget.text
+            self.acf_object.ids['"sec_top"'].text = widget.text
+
         try:
             self.seconds_left = int(self.acf_object.ids['"sec_top"'].text) + \
                 60*int(self.acf_object.ids['"min_top"'].text) + \
@@ -552,9 +576,12 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
 
         if self.clock_features['debug'] is True:
             print("IDS=",self.acf_object.ids)
-            print("HRS=",self.acf_object.ids['"hrs_top"'].text)
-            print(self.acf_object.ids['"min_top"'].text)
-            print(self.acf_object.ids['"sec_top"'].text)
+            print("SELF HRS=", self.str_hours)
+            print("SELF MIN=", self.str_min)
+            print("SELF SEC=", self.str_sec)
+            print("ACF HRS=", self.acf_object.ids['"hrs_top"'].text)
+            print("ACF MIN=", self.acf_object.ids['"min_top"'].text)
+            print("ACF SEC=", self.acf_object.ids['"sec_top"'].text)
             print(self.seconds_left)
             print("===========================")
             print("START=",self.start_seconds)

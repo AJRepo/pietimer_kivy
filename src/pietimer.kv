@@ -226,16 +226,19 @@ TimerPager:
             #See TimerText Parent Dynamic Class Above (child class)
             TimerText:
                 id: "hrs_top"
+                name: "hrs_tt"
                 text: app.str_hours
                 disabled: app.running  #change to True when clock is running
                 on_text_validate: app.set_new_time(self)
             TimerText:
                 id: "min_top"
+                name: "min_tt"
                 text: app.str_min
                 disabled: app.running  #change to True when clock is running
                 on_text_validate: app.set_new_time(self)
             TimerText:
                 id: "sec_top"
+                name: "sec_tt"
                 text: app.str_sec
                 disabled: app.running  #change to True when clock is running
                 on_text_validate: app.set_new_time(self)
