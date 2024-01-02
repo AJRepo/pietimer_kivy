@@ -50,9 +50,8 @@ class TimerPager(PageLayout):
     def __init__(self, clock_features=None, **kwargs):
         super().__init__(**kwargs)
         ##the above is the same as super(AnalogClockFace,self)....
-        print(clock_features)
-        self.str_hours = "0h"
-        self.add_widget(AnalogClockFace(clock_features=clock_features))
+        #print(clock_features)
+        #self.add_widget(AnalogClockFace(clock_features=clock_features))
 class PageControls(BoxLayout): # pylint: disable=too-few-public-methods
     """Kivy requires defining args passed in before init"""
 
@@ -275,8 +274,8 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
         """Pietimer. This is the last setup of the app. All stuff modifying wigets overridden"""
         self.pager_layout = TimerPager(clock_features=self.clock_features)
         self.acf_object = AnalogClockFace(clock_features=self.clock_features)
-        #return self.pager_layout
-        return self.acf_object
+        return self.pager_layout
+        #return self.acf_object
         #b = Label(text="2")
         #self.add_widget(b)
         #return Label(text="Code Button!!!")
