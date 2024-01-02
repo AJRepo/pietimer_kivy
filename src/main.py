@@ -189,6 +189,12 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
     """PieTimer Child Class of App Parent class
     """
     acf_object = ObjectProperty(None)
+    str_hours = StringProperty("0a")
+    str_min = StringProperty("0b")
+    str_sec = StringProperty("0c")
+    top_opacity = NumericProperty(0)
+    running = BooleanProperty(True)
+    f_angle_end = NumericProperty(275)
     def __init__(self, sys_args, **kwargs):
         super().__init__(**kwargs)
         self.args = sys_args
@@ -399,7 +405,8 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
 
         #Note: front_pie is .py, fore_pie is .kv
         #self.acf_object.clock_widgets["front_pie"][0].angle_end = self.fraction_left() * 360
-        self.acf_object.f_angle_end = self.fraction_left() * 360
+        self.f_angle_end = self.fraction_left() * 360
+        self.acf_object.f_angle_end = self.f_angle_end
         #print("front_pie=", self.acf_object.clock_widgets["front_pie"][0].angle_end )
 
     def fraction_left(self):
@@ -446,11 +453,14 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
                 #print("DEBUG: ----------RUNNING DOWN")
                 #Note: Changed from calling the widget to a StringProperty
                 #self.ids['"hrs"'].text =
-                self.acf_object.str_hours = str(int((round_seconds_left/3600)%24)).rjust(2,"0")
+                self.str_hours = str(int((round_seconds_left/3600)%24)).rjust(2,"0")
+                self.acf_object.str_hours = self.str_hours
                 #self.ids['"min"'].text =
-                self.acf_object.str_min = str(int((round_seconds_left/60)%60)).rjust(2,"0")
+                self.str_min = str(int((round_seconds_left/60)%60)).rjust(2,"0")
+                self.acf_object.str_min = self.str_min
                 #self.ids['"sec"'].text =
-                self.acf_object.str_sec = str(int(round_seconds_left%60)).rjust(2,"0")
+                self.str_sec = str(int(round_seconds_left%60)).rjust(2,"0")
+                self.acf_object.str_sec = self.str_sec
 
                 if self.clock_features['term_ppm'] == 1 \
                    and abs(round_seconds_left - self.seconds_left) < .1:
@@ -499,11 +509,13 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
             self.acf_object.running = False
             self.myclock.cancel()
             self.acf_object.top_opacity = 1
+            self.top_opacity = 1
             widget.text = " Start "
         else:
             self.running = True
             self.acf_object.running = True
             self.acf_object.top_opacity = 0
+            self.top_opacity = 0
             widget.text = " Stop  "
             self.myclock = Clock.schedule_interval(self.runclock, self.clock_interval)
 
@@ -553,8 +565,6 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
         #    self.clock_features['debug'] = 'True'
         #else:
         #    self.clock_features['debug'] = False
-
-
 
 #initiate class and run
 if __name__ == "__main__":

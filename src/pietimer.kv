@@ -76,7 +76,7 @@ AnalogClockFace:
                 #pos: 0,50
                 size: pie_radius_factor * self.width, pie_radius_factor * self.width
                 angle_start: 0
-                angle_end: root.f_angle_end
+                angle_end: app.f_angle_end
         #this didn't work - don't know why
         #on_parent:
         #    for i in range(12): txt=str(i*5); self.add_widget(Label(text=txt,text_size=(None,None),size_hint=(.001,.001),pos=(root.center_x*(1 + 1.1*pie_radius_factor*sin(2*pi*i/12)), root.center_y + 1.1*pie_radius_factor* (root.center_x) * cos(2*pi*i/12) ), color=(0,1,0),font_size="22sp"))
@@ -176,20 +176,20 @@ AnalogClockFace:
             size: 20, root.width/8
             TimerButton:
                 id: "hrs"
-                text: root.str_hours
+                text: app.str_hours
             TimerButton:
                 id: "min"
-                text: root.str_min
+                text: app.str_min
             TimerButton:
                 id: "sec"
-                text: root.str_sec
+                text: app.str_sec
         BoxLayout:
             id: "top_text_boxes"
             anchor_x: 'center'
             anchor_y: 'center'
             size_hint: text_area_hint
             size: 20, root.width/8
-            opacity: root.top_opacity
+            opacity: app.top_opacity
             #canvas:
             #    Color:
             #        rgb: .9,0,.9
@@ -199,19 +199,19 @@ AnalogClockFace:
             #See TimerText Parent Dynamic Class Above (child class)
             TimerText:
                 id: "hrs_top"
-                text: root.str_hours
-                disabled: root.running  #change to True when clock is running
+                text: app.str_hours
+                disabled: app.running  #change to True when clock is running
                 #disabled: False  #change to True when clock is running
                 on_text_validate: app.set_new_time(self)
             TimerText:
                 id: "min_top"
-                text: root.str_min
-                disabled: root.running  #change to True when clock is running
+                text: app.str_min
+                disabled: app.running  #change to True when clock is running
                 on_text_validate: app.set_new_time(self)
             TimerText:
                 id: "sec_top"
-                text: root.str_sec
-                disabled: root.running  #change to True when clock is running
+                text: app.str_sec
+                disabled: app.running  #change to True when clock is running
                 on_text_validate: app.set_new_time(self)
 
     AnchorLayout:
