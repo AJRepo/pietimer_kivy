@@ -47,8 +47,8 @@ if platform == 'linux':
 
 class TimerPager(PageLayout):
     """See .kv file for details"""
-    def __init__(self, clock_features=None, **kwargs):
-        super().__init__(**kwargs)
+    #def __init__(self, clock_features=None, **kwargs):
+    #    super().__init__(**kwargs)
         ##the above is the same as super(AnalogClockFace,self)....
         #print(clock_features)
         #self.add_widget(AnalogClockFace(clock_features=clock_features))
@@ -212,6 +212,7 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
         super().__init__(**kwargs)
         self.args = sys_args
 
+        self.page_layout = False
         self.clock_features = self.setup_args()
         self.running = True
         self.seconds_left = 0.0   #could be a fraction of a second
@@ -222,7 +223,6 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
 
         #this sets the variable self.seconds_left based on what is returned by setup_args
         self.set_start_seconds()
-
 
         #don't set size of window on mobile devices
         #if kivy.utils.platform == 'linux' or kivy.utils.platform == 'win':
@@ -262,21 +262,21 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
         # Alternatively set event_run = Clock...
         #     and then to stop use event_run.cancel() or Clock.unschedule(event_run)
 
-
-
     #def __init__(self, sys_args):
     #    self.args = sys_args
     #    App.__init__(self)
     #    self.clock_features = self.setup_args()
     #    #self.build()
 
-
     def build(self):
         """Pietimer. This is the last setup of the app. All stuff modifying wigets overridden"""
-        self.pager_layout = TimerPager(clock_features=self.clock_features)
+        self.pager_layout = TimerPager()
+        #self.pager_layout = TimerPager(clock_features=self.clock_features)
         self.acf_object = AnalogClockFace(clock_features=self.clock_features)
-        return self.pager_layout
-        #return self.acf_object
+        if self.do_page_layout is True:
+            return self.pager_layout
+        #else
+        return self.acf_object
         #b = Label(text="2")
         #self.add_widget(b)
         #return Label(text="Code Button!!!")
@@ -297,6 +297,7 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
         debug=False
         buttons = False
         console_only = False
+        self.do_page_layout = False
         display_numeric = False
         display_current_time = False
         dict_time = {'seconds': 0, 'minutes': 0, 'hours': 0}
@@ -308,11 +309,11 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
         opts = []
         try:
             opts, _ = getopt.getopt(self.args,
-                                    "bdntqh:m:s:x:y:c:r:",
+                                    "bdntqph:m:s:x:y:c:r:",
                                     ["terminal_beep", "quiet", "hours=", "minutes=", "seconds=",
                                      "buttons", "x_size=", "y_size=", "color=", "clock_bg_color=",
                                      "display_current_time", "console_only", "term_ppm",
-                                     "display_numeric","debug","repeat="]
+                                     "display_numeric","debug","repeat=","page_layout"]
                                    )
         except getopt.GetoptError:
             print("Usage:\n pietimer.py [Arguments]\n")
@@ -327,6 +328,7 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
             print("  [-h <#>] [--hours=<#>]")
             print("  [-m <#>] [--minutes=<#>]")
             print("  [-n ] [--display_currrent_time]")
+            print("  [-p ] [--page_layout]")
             print("  [-s <#>] [--secondss=<#>]")
             print("  [-r <#> or --repeat <#> ]  Repeat the countdown # times")
             print("  [-q or --quiet]  Do not print time left in terminal")
@@ -365,6 +367,8 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
                 terminal_beep = 1
             elif opt in ("--term_ppm"):
                 term_ppm = 1
+            elif opt in ("-p", "--page_layout"):
+                self.do_page_layout = True
             elif opt in ("-q", "--quiet"):
                 quiet = 1
             elif opt in ("-b", "--buttons"):
