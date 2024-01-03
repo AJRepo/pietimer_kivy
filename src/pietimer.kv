@@ -44,20 +44,30 @@ TimerPager:
             size: 20, 50 
         Button:
             size_hint: .25, .25
-            text: "stop"
+            text: app.start_stop_text
+            on_press: app.toggle_running(self)
 
 <PageControls>
     id: page_controls
     #size: 20, root.width/8
     TimerText:
         id: pc_hours
+        name: "hrs_tt"
         text: app.str_hours
+        disabled: app.running  #change to True when clock is running
+        on_text_validate: app.set_new_time(self)
     TimerText:
         id: pc_min
+        name: "min_tt"
         text: app.str_min
+        disabled: app.running  #change to True when clock is running
+        on_text_validate: app.set_new_time(self)
     TimerText:
         id: pc_sec
+        name: "sec_tt"
         text: app.str_sec
+        disabled: app.running  #change to True when clock is running
+        on_text_validate: app.set_new_time(self)
 
 <AnalogClockFace>:
     #ID's create weak references
@@ -267,7 +277,7 @@ TimerPager:
             #size_hint: None, None
             #size: 1.1* self.texture_size[0], 1.25* self.texture_size[1]
             #pos_hint: {"center_x":0.1, "center_y":0.1}
-            text: "STOP"
+            text: app.start_stop_text
             on_press: app.toggle_running(self)
     #FloatLayout:
     #    id: "clock_buttons"

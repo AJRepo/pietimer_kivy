@@ -207,6 +207,7 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
     top_opacity = NumericProperty(0)
     running = BooleanProperty(True)
     f_angle_end = NumericProperty(275)
+    start_stop_text = StringProperty("stop")
     def __init__(self, sys_args, **kwargs):
         super().__init__(**kwargs)
         self.args = sys_args
@@ -525,12 +526,14 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
             self.acf_object.top_opacity = 1
             self.top_opacity = 1
             widget.text = " Start "
+            self.start_stop_text = " start "
         else:
             self.running = True
             self.acf_object.running = True
             self.acf_object.top_opacity = 0
             self.top_opacity = 0
             widget.text = " Stop  "
+            self.start_stop_text = " stop "
             self.myclock = Clock.schedule_interval(self.runclock, self.clock_interval)
 
     def set_new_time(self, widget):  #pylint: disable=unused-argument
