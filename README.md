@@ -16,6 +16,7 @@ Arguments:
   [-m <#>] [--minutes=<#>]
   [-n ] [--display_currrent_time]  (always true in this version)
   [-s <#>] [--secondss=<#>]
+  [-p or --page_layout]  New feature: add PageLayout of numbers over pie timer
   [-q or --quiet]  Do not print time left in terminal  (not implemented yet in this version)
   [--term_ppm] Print to terminal time left each minute  (not implemented yet in this version)
   [-t or --terminal_beep] Execute a beep at t=0  (not implemented yet in this version)
