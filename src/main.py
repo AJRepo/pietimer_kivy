@@ -33,6 +33,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.graphics import Color, Ellipse
 #from kivy.properties import DictProperty, BooleanProperty
 from kivy.properties import ObjectProperty #pylint: disable=no-name-in-module
+from kivy.properties import ColorProperty #pylint: disable=no-name-in-module
 from kivy.properties import NumericProperty #pylint: disable=no-name-in-module
 from kivy.properties import StringProperty, BooleanProperty #pylint: disable=no-name-in-module
 from kivy.core.window import Window
@@ -71,6 +72,7 @@ class AnalogClockFace(FloatLayout): #pylint: disable=too-many-instance-attribute
     top_opacity = NumericProperty(0)
     f_angle_end = NumericProperty(275)
     ajotest = NumericProperty(Window.width)
+    time_left_color = ColorProperty('blue')
 
     #for using .kv file
     def __init__(self, clock_features=None, **kwargs):
@@ -113,6 +115,7 @@ class AnalogClockFace(FloatLayout): #pylint: disable=too-many-instance-attribute
         if clock_features['initialized'] is True:
             PieTimer.set_start_seconds(self)
             self.repeat = self.clock_features['total_repeat']
+            self.time_left_color = self.clock_features['time_left_color']
             if self.clock_features['debug'] is True:
                 print(f"XWIDTH NOW = {clock_features['initialized']}")
             #add_clock_numbers: puts a series of numbers around the clock/pie

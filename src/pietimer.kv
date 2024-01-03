@@ -36,14 +36,17 @@ TimerPager:
     write_tab: False
 
 <TimerPager>
+    border: '25dp'
     AnalogClockFace:
     BoxLayout:
         orientation: 'vertical'
         PageControls:
             size_hint: 1,None
             size: 20, 50 
+        Label:
+            text: ""
         Button:
-            size_hint: .25, .25
+            size_hint: .2, .15
             text: app.start_stop_text
             on_press: app.toggle_running(self)
 
@@ -103,7 +106,7 @@ TimerPager:
                 #angle_start: 0
                 #angle_end: 180
             Color:
-                rgb: timeleft_color
+                rgb: root.time_left_color
             Ellipse:
                 group: "fore_pie"
                 #Pos is the lower left corner of the square bounding the ellipse. Ugh.
@@ -269,7 +272,7 @@ TimerPager:
     AnchorLayout:
         id: "clock_buttons"
         anchor_x: 'left'
-        anchor_y: 'top'
+        anchor_y: 'bottom'
         Button:
             #FloatLayout only pos_hint and the size_hint properties of its children.
             id: "start_stop"
