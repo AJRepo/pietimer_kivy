@@ -34,7 +34,7 @@ TimerPager:
     color: text_color
     write_tab: False
 
-<TimerPager>
+<TimerPager>:
     border: '25dp'
     AnalogClockFace:
     BoxLayout:
@@ -49,7 +49,7 @@ TimerPager:
             text: app.start_stop_text
             on_press: app.toggle_running(self)
 
-<PageControls>
+<PageControls>:
     id: page_controls
     #size: 20, root.width/8
     TimerText:
