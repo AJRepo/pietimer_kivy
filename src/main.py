@@ -57,13 +57,16 @@ class TimerPager(PageLayout):
 
     def on_touch_down(self, touch):
         super().on_touch_down(touch)
+        print(self.page)
         if touch.spos[0] > .95:
             if self.page == 1:
                 self.page = 0
-            else:
+                print("0000", self.page)
+            elif self.page == 0:
                 self.page = 1
-        print(touch.spos)
-        print(touch.pos)
+                print("1111", self.page)
+        #print(touch.spos)
+        #print(touch.pos)
 
 class PageControls(BoxLayout): # pylint: disable=too-few-public-methods
     """Kivy requires defining args passed in before init"""
@@ -227,7 +230,7 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
         super().__init__(**kwargs)
         self.args = sys_args
 
-        self.page_layout = False
+        self.page_layout = True
         self.clock_features = self.setup_args()
         self.running = True
         self.seconds_left = 0.0   #could be a fraction of a second
@@ -312,7 +315,8 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
         debug=False
         buttons = False
         console_only = False
-        self.do_page_layout = False
+        #Setting to True for debugging this branch
+        self.do_page_layout = True
         display_numeric = False
         display_current_time = False
         dict_time = {'seconds': 0, 'minutes': 0, 'hours': 0}
