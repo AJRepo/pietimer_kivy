@@ -49,10 +49,22 @@ if platform == 'linux':
 class TimerPager(PageLayout):
     """See .kv file for details"""
     #def __init__(self, clock_features=None, **kwargs):
+    #def __init__(self, **kwargs):
     #    super().__init__(**kwargs)
         ##the above is the same as super(AnalogClockFace,self)....
         #print(clock_features)
         #self.add_widget(AnalogClockFace(clock_features=clock_features))
+
+    def on_touch_down(self, touch):
+        super().on_touch_down(touch)
+        if touch.spos[0] > .95:
+            if self.page == 1:
+                self.page = 0
+            else:
+                self.page = 1
+        print(touch.spos)
+        print(touch.pos)
+
 class PageControls(BoxLayout): # pylint: disable=too-few-public-methods
     """Kivy requires defining args passed in before init"""
 
