@@ -247,6 +247,7 @@ TimerPager:
                 name: "min_tt"
                 text: app.str_min
                 disabled: app.running  #change to True when clock is running
+                #Note: experimented with (self.name) but also requires self.text
                 on_text_validate: app.set_new_time(self)
             TimerText:
                 id: "sec_top"
