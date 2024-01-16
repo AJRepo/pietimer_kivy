@@ -47,6 +47,13 @@ as src/main.py, otherwise call it as "python3 /path/to/main.py"
 
 # Installation on Mobile Device (Android)
 
+0. Get the .apk file. 
+
+The current release is at https://github.com/AJRepo/pietimer_kivy/releases/download/v1.2.0/pietimer-1.2.0-arm64-v8a_armeabi-v7a-debug.apk 
+
+If you are on your mobile device, then that's it. But if you want to run 
+a security checksum on it first and use adb, then follow steps 1-4 below.
+
 1. Do a checksum of the .apk file
 
 ```
