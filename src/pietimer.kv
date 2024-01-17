@@ -35,21 +35,51 @@ TimerPager:
     write_tab: False
 
 <TimerPager>:
-    border: '25dp'
+    border: 0
     AnalogClockFace:
     BoxLayout:
         orientation: 'vertical'
-        PageControls:
+        background_color: (.9,.1,.9,1)
+        Bubble:
+            #arrow_image: './arrow_r_sm.png'
+            size_hint: 1, .2
+            #arrow_pos: 'top_mid'
+            #arrow_pos: 'right_mid'
+            #arrow_pos: 'bottom_mid'
+            #background_color: .9, .6, .7, 1
+            background_color: (.9,.1,.9,1)
+            BubbleContent:
+                background_color: (.9,.1,.9,1)
+                BubbleButton:
+                    background_color: (.9,.1,.9,1)
+                    text: 'there'
+                BubbleButton:
+                    background_color: (.1,1,.1,1)
+                    text: 'hello'
+                BubbleButton:
+                    text: 'foo'
+        Time1Controls:
             size_hint: 1,None
             size: 20, 50 
-        Label:
-            text: ""
-        Button:
-            size_hint: .2, .15
-            text: app.start_stop_text
-            on_press: app.toggle_running(self)
+        Time2Controls:
+            size_hint: 1,None
+            size: 20, 50 
+        Widget:
+        BoxLayout:
+            size_hint: 1, .25
+            Button:
+                size_hint: .3, .6  #fraction of fraction
+                text: app.start_stop_text
+                on_press: app.toggle_running(self)
+            Widget:
+            Image: 
+                size_hint: .2, 1
+                source: './arrow_r_sm.png'
+                #name=allow_stretch of object ... will be removed in future version
+                #allow_stretch: False
+                #background_normal: 'arrow_rlt_sm.png'
 
-<PageControls>:
+<Time1Controls>:
     id: page_controls
     #size: 20, root.width/8
     TimerText:
@@ -70,6 +100,31 @@ TimerPager:
         text: app.str_sec
         disabled: app.running  #change to True when clock is running
         on_text_validate: app.set_new_time(self)
+    Label:
+        text: "<-Time1"
+<Time2Controls>:
+    id: time2controls
+    #size: 20, root.width/8
+    TimerText:
+        id: pc_hours
+        name: "hrs_tt"
+        text: app.str_hours
+        disabled: app.running  #change to True when clock is running
+        #on_text_validate: app.set_new_time(self)
+    TimerText:
+        id: pc_min
+        name: "min_tt"
+        text: app.str_min
+        disabled: app.running  #change to True when clock is running
+        #on_text_validate: app.set_new_time(self)
+    TimerText:
+        id: pc_sec
+        name: "sec_tt"
+        text: app.str_sec
+        disabled: app.running  #change to True when clock is running
+        #on_text_validate: app.set_new_time(self)
+    Label:
+        text: "<-Time2"
 
 <AnalogClockFace>:
     #ID's create weak references
@@ -258,7 +313,7 @@ TimerPager:
 
     AnchorLayout:
         id: "debug_buttons"
-        anchor_x: 'right'
+        anchor_x: 'center'
         anchor_y: 'bottom'
         Button:
             id: "debug_button"
@@ -270,6 +325,17 @@ TimerPager:
             disabled: True
 
     AnchorLayout:
+        id: 'moveout'
+        anchor_x: 'right'
+        anchor_y: 'bottom'
+        Image: 
+            id: 'arrow_right'
+            #size_hint very small required to move image around. 
+            size_hint: .1, .1
+            source: './menu_sm.png'
+            opacity: app.menu_opacity
+
+    AnchorLayout:
         id: "clock_buttons"
         anchor_x: 'left'
         anchor_y: 'bottom'
@@ -277,11 +343,14 @@ TimerPager:
             #FloatLayout only pos_hint and the size_hint properties of its children.
             id: "start_stop"
             size_hint: .2, .1
+            background_color: app.stopstart_color
             #size_hint: None, None
             #size: 1.1* self.texture_size[0], 1.25* self.texture_size[1]
             #pos_hint: {"center_x":0.1, "center_y":0.1}
             text: app.start_stop_text
             on_press: app.toggle_running(self)
+
+
     #FloatLayout:
     #    id: "clock_buttons"
     #    size_hint: None, None

@@ -51,24 +51,27 @@ class TimerPager(PageLayout):
     #def __init__(self, clock_features=None, **kwargs):
     #def __init__(self, **kwargs):
     #    super().__init__(**kwargs)
+        #self.menu_opacity = app.top_opacity
         ##the above is the same as super(AnalogClockFace,self)....
         #print(clock_features)
         #self.add_widget(AnalogClockFace(clock_features=clock_features))
+        #self.ids['"debug_button"'].opacity = 1
+        #print(self)
 
     def on_touch_down(self, touch):
-        super().on_touch_down(touch)
-        print(self.page)
-        if touch.spos[0] > .95:
+        if touch.spos[0] > .87:
             if self.page == 1:
                 self.page = 0
-                print("0000", self.page)
+                app.toggle_page0_menu()
             elif self.page == 0:
                 self.page = 1
-                print("1111", self.page)
-        #print(touch.spos)
-        #print(touch.pos)
+                app.toggle_page0_menu()
+            return True
+        return super().on_touch_down(touch)
 
-class PageControls(BoxLayout): # pylint: disable=too-few-public-methods
+class Time1Controls(BoxLayout): # pylint: disable=too-few-public-methods
+    """Kivy requires defining args passed in before init"""
+class Time2Controls(BoxLayout): # pylint: disable=too-few-public-methods
     """Kivy requires defining args passed in before init"""
 
 class AnalogClockFace(FloatLayout): #pylint: disable=too-many-instance-attributes
@@ -223,7 +226,9 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
     str_min = StringProperty("0b")
     str_sec = StringProperty("0c")
     top_opacity = NumericProperty(0)
+    menu_opacity = NumericProperty(1)
     running = BooleanProperty(True)
+    stopstart_color = ColorProperty('red')
     f_angle_end = NumericProperty(275)
     start_stop_text = StringProperty("stop")
     def __init__(self, sys_args, **kwargs):
@@ -238,6 +243,7 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
         self.countdown = True
         self.clock_interval = .1
         self.repeat = 0
+        self.stopstart_color = 'red'
 
         #this sets the variable self.seconds_left based on what is returned by setup_args
         self.set_start_seconds()
@@ -539,6 +545,14 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
         #when get to 0 unschedule the Clock event by returning False
         #return False
 
+    def toggle_page0_menu(self):
+        """Pietimer. Toggle self.menu_opacity"""
+        if self.menu_opacity == 1:
+            self.menu_opacity = 0
+        else:
+            self.menu_opacity = 1
+        return True
+
     def toggle_running(self, widget):
         """Pietimer. Toggle self.running variable here in widget and in App"""
         #acf_object is the class, top_opacity is the numeric property
@@ -550,6 +564,7 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
             self.top_opacity = 1
             widget.text = " Start "
             self.start_stop_text = " start "
+            self.stopstart_color = 'green'
         else:
             self.running = True
             self.acf_object.running = True
@@ -557,6 +572,7 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
             self.top_opacity = 0
             widget.text = " Stop  "
             self.start_stop_text = " stop "
+            self.stopstart_color = 'red'
             self.myclock = Clock.schedule_interval(self.runclock, self.clock_interval)
 
     def set_new_time(self, widget):  #pylint: disable=unused-argument
