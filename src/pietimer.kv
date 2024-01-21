@@ -8,6 +8,7 @@
 #:set my_color [1, .1, .5]
 #:set text_area_hint [.5, None]
 #:set pie_radius_factor .74
+#:set p2_size 20, 30 
 
 #The main interface - must be class name? Only one root objec is allowed by .kv
 TimerPager:
@@ -33,6 +34,26 @@ TimerPager:
     halign: 'center'
     color: text_color
     write_tab: False
+#Dynamic Class: Used for h,m,s buttons (Templates Deprecated 1.7 onward)
+<P2TimerButton@Button>:
+    disabled: True
+    background_normal: ''
+    background_disabled_normal: self.background_normal
+    background_color: (.9,.9,.9,1)
+    #font_size: self.width/1.5
+    font_size: '14sp'
+    color: text_color
+#Dynamic Class: Used for h,m,s TextInputs
+<P2TimerText@TextInput>:
+    background_normal: ''
+    background_disabled_normal: self.background_normal
+    background_color: (.9,.9,.9,1)
+    #font_size: self.width/1.75
+    font_size: '14sp'
+    multiline: False
+    halign: 'center'
+    color: text_color
+    write_tab: False
 
 <TimerPager>:
     border: 0
@@ -40,36 +61,62 @@ TimerPager:
     BoxLayout:
         orientation: 'vertical'
         background_color: (.9,.1,.9,1)
-        Bubble:
-            #arrow_image: './arrow_r_sm.png'
-            size_hint: 1, .2
-            #arrow_pos: 'top_mid'
-            #arrow_pos: 'right_mid'
-            #arrow_pos: 'bottom_mid'
-            #background_color: .9, .6, .7, 1
-            background_color: (.9,.1,.9,1)
-            BubbleContent:
-                background_color: (.9,.1,.9,1)
-                BubbleButton:
-                    background_color: (.9,.1,.9,1)
-                    text: 'there'
-                BubbleButton:
-                    background_color: (.1,1,.1,1)
-                    text: 'hello'
-                BubbleButton:
-                    text: 'foo'
+        #Bubble:
+        #    #arrow_image: './arrow_r_sm.png'
+        #    size_hint: 1, .2
+        #    #arrow_pos: 'top_mid'
+        #    #arrow_pos: 'right_mid'
+        #    #arrow_pos: 'bottom_mid'
+        #    #background_color: .9, .6, .7, 1
+        #    background_color: (.9,.1,.9,1)
+        #    BubbleContent:
+        #        background_color: (.9,.1,.9,1)
+        #        BubbleButton:
+        #            background_color: (.9,.1,.9,1)
+        #            text: 'reset'
+        #        BubbleButton:
+        #            background_color: (.1,1,.1,1)
+        #            text: 'hello'
+        #        BubbleButton:
+        #            text: 'foo'
         Time1Controls:
             size_hint: 1,None
-            size: 20, 50 
+            size: p2_size
         Time2Controls:
             size_hint: 1,None
-            size: 20, 50 
+            size: p2_size
+        BoxLayout:
+            size_hint: 1, None
+            size: p2_size   #x will be ignored
+            P2TimerText:
+                text: "4"
+                size: p2_size
+            P2TimerText:
+                text: "Loops"
+                disabled: True
+            Widget:
+            Widget:
+        Time3Controls:
+            size_hint: 1,None
+            size: p2_size
+        BoxLayout:
+            size_hint: 1, None
+            size: p2_size   #x will be ignored
+            P2TimerText:
+                text: "0"
+                size: p2_size
+            P2TimerText:
+                text: "Loops"
+                disabled: True
+            Widget:
+            Widget:
         Widget:
         BoxLayout:
             size_hint: 1, .25
             Button:
                 size_hint: .3, .6  #fraction of fraction
                 text: app.start_stop_text
+                background_color: app.start_stop_color
                 on_press: app.toggle_running(self)
             Widget:
             Image: 
@@ -82,49 +129,80 @@ TimerPager:
 <Time1Controls>:
     id: page_controls
     #size: 20, root.width/8
-    TimerText:
+    P2TimerText:
         id: pc_hours
         name: "hrs_tt"
-        text: app.str_hours
+        text: "00"
         disabled: app.running  #change to True when clock is running
         on_text_validate: app.set_new_time(self)
-    TimerText:
+    P2TimerText:
         id: pc_min
         name: "min_tt"
-        text: app.str_min
+        text: "25"
         disabled: app.running  #change to True when clock is running
         on_text_validate: app.set_new_time(self)
-    TimerText:
+    P2TimerText:
         id: pc_sec
         name: "sec_tt"
-        text: app.str_sec
+        text: "00"
         disabled: app.running  #change to True when clock is running
         on_text_validate: app.set_new_time(self)
-    Label:
-        text: "<-Time1"
+    P2TimerButton:
+        text: "Time1"
+        disabled: False
+        background_color: "cyan"
+    Widget:
 <Time2Controls>:
     id: time2controls
     #size: 20, root.width/8
-    TimerText:
+    P2TimerText:
         id: pc_hours
         name: "hrs_tt"
-        text: app.str_hours
+        text: "00"
         disabled: app.running  #change to True when clock is running
         #on_text_validate: app.set_new_time(self)
-    TimerText:
+    P2TimerText:
         id: pc_min
         name: "min_tt"
-        text: app.str_min
+        text: "05"
         disabled: app.running  #change to True when clock is running
         #on_text_validate: app.set_new_time(self)
-    TimerText:
+    P2TimerText:
         id: pc_sec
         name: "sec_tt"
-        text: app.str_sec
+        text: "00"
         disabled: app.running  #change to True when clock is running
         #on_text_validate: app.set_new_time(self)
-    Label:
-        text: "<-Time2"
+    P2TimerButton:
+        text: "Time2"
+        disabled: False
+    Widget:
+<Time3Controls>:
+    id: time3controls
+    #size: 20, root.width/8
+    P2TimerText:
+        id: pc_hours
+        name: "hrs_tt"
+        text: "00"
+        disabled: app.running  #change to True when clock is running
+        #on_text_validate: app.set_new_time(self)
+    P2TimerText:
+        id: pc_min
+        name: "min_tt"
+        text: "20"
+        disabled: app.running  #change to True when clock is running
+        #on_text_validate: app.set_new_time(self)
+    P2TimerText:
+        id: pc_sec
+        name: "sec_tt"
+        text: "00"
+        disabled: app.running  #change to True when clock is running
+        #on_text_validate: app.set_new_time(self)
+    P2TimerButton:
+        text: "Time3"
+        background_color: "orange"
+        disabled: False
+    Widget:
 
 <AnalogClockFace>:
     #ID's create weak references

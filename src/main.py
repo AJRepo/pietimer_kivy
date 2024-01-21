@@ -73,6 +73,8 @@ class Time1Controls(BoxLayout): # pylint: disable=too-few-public-methods
     """Kivy requires defining args passed in before init"""
 class Time2Controls(BoxLayout): # pylint: disable=too-few-public-methods
     """Kivy requires defining args passed in before init"""
+class Time3Controls(BoxLayout): # pylint: disable=too-few-public-methods
+    """Kivy requires defining args passed in before init"""
 
 class AnalogClockFace(FloatLayout): #pylint: disable=too-many-instance-attributes
     """Kivy requires defining args passed in before init"""
