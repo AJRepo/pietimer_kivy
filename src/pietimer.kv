@@ -5,7 +5,6 @@
 #:import Label kivy.uix.label.Label
 #:set pie_bg_color [1, 1, 1]
 #:set text_color [.1, .1, .1]
-#:set my_color [1, .1, .5]
 #:set text_area_hint [.5, None]
 #:set pie_radius_factor .74
 #:set p2_size 20, 30 
@@ -41,7 +40,7 @@ TimerPager:
     background_disabled_normal: self.background_normal
     background_color: (.9,.9,.9,1)
     #font_size: self.width/1.5
-    font_size: '14sp'
+    font_size: '15sp'
     color: text_color
 #Dynamic Class: Used for h,m,s TextInputs
 <P2TimerText@TextInput>:
@@ -49,11 +48,12 @@ TimerPager:
     background_disabled_normal: self.background_normal
     background_color: (.9,.9,.9,1)
     #font_size: self.width/1.75
-    font_size: '14sp'
+    font_size: '15sp'
     multiline: False
     halign: 'center'
     color: text_color
     write_tab: False
+    size_hint: .25,1
 
 <TimerPager>:
     border: 0
@@ -87,29 +87,21 @@ TimerPager:
             size: p2_size
         BoxLayout:
             size_hint: 1, None
-            size: p2_size   #x will be ignored
+            size: 40, 30   #x will be ignored
+            Widget:
+                size_hint: .2,1
             P2TimerText:
                 text: "4"
                 size: p2_size
+                disabled: app.running
             P2TimerText:
                 text: "Loops"
                 disabled: True
             Widget:
-            Widget:
+                size_hint: .2,1
         Time3Controls:
             size_hint: 1,None
             size: p2_size
-        BoxLayout:
-            size_hint: 1, None
-            size: p2_size   #x will be ignored
-            P2TimerText:
-                text: "0"
-                size: p2_size
-            P2TimerText:
-                text: "Loops"
-                disabled: True
-            Widget:
-            Widget:
         Widget:
         BoxLayout:
             size_hint: 1, .25
@@ -128,7 +120,16 @@ TimerPager:
 
 <Time1Controls>:
     id: page_controls
-    #size: 20, root.width/8
+    Switch:
+        id: "tb1"
+        size_hint: .5, 1
+        text: "Time1 On "
+        disabled: True
+        active: True
+        opacity: 0
+        #on_press: self.text = "Time1 On " if self.text=="Time1 Off" else "Time1 Off"
+        #background_disabled_normal: self.background_normal #this is an image
+        #background_color: "green"
     P2TimerText:
         id: pc_hours
         name: "hrs_tt"
@@ -147,14 +148,29 @@ TimerPager:
         text: "00"
         disabled: app.running  #change to True when clock is running
         on_text_validate: app.set_new_time(self)
-    P2TimerButton:
-        text: "Time1"
-        disabled: False
-        background_color: "cyan"
-    Widget:
+    Button:
+        size_hint: .3,1
+        #color: "black"
+        disabled_color: "white"
+        text: "Time 1"
+        disabled: True
+        background_disabled_normal: ""
+        background_normal: ""
+        #multiplier to the texture color. The default texture is grey, so just setting the background color will give a darker result. To set a plain color, set the background_normal to ''.
+        background_color: "blue"
 <Time2Controls>:
     id: time2controls
-    #size: 20, root.width/8
+    Switch:
+        id: "tb2"
+        size_hint: .5, 1
+        #state: "down"  #or "normal"
+        active: False
+        text: "Time2 On "
+        #on_press: self.text = "Time2 On " if self.text=="Time2 Off" else "Time2 Off"
+        disabled: app.running
+        #background_color: (0,1,0,1)
+        background_color: (.9,.9,.9,1)
+        #background_normal: "(.9,.1,.1,1)"
     P2TimerText:
         id: pc_hours
         name: "hrs_tt"
@@ -173,13 +189,28 @@ TimerPager:
         text: "00"
         disabled: app.running  #change to True when clock is running
         #on_text_validate: app.set_new_time(self)
-    P2TimerButton:
-        text: "Time2"
-        disabled: False
-    Widget:
+    Button:
+        size_hint: .3,1
+        color: "black"
+        disabled_color: "black"
+        text: "Time 2"
+        disabled: True
+        background_disabled_normal: ""
+        background_normal: ""
+        #multiplier to the texture color. The default texture is grey, so just setting the background color will give a darker result. To set a plain color, set the background_normal to ''.
+        background_color: "orange"
 <Time3Controls>:
     id: time3controls
-    #size: 20, root.width/8
+    Switch:
+        id: "tb3"
+        #text: "Time3 On "
+        size_hint: .5, 1
+        #on_press: self.text = "Time3 On " if self.text=="Time3 Off" else "Time3 Off"
+        disabled: app.running
+        #background_color: (.9,.9,.9,1)
+        background_color: (0,0,.99,1)
+        background_normal: "(.99,0,0,1)"
+        background_down: "(.99,0,0,1)"
     P2TimerText:
         id: pc_hours
         name: "hrs_tt"
@@ -198,11 +229,16 @@ TimerPager:
         text: "00"
         disabled: app.running  #change to True when clock is running
         #on_text_validate: app.set_new_time(self)
-    P2TimerButton:
-        text: "Time3"
-        background_color: "orange"
-        disabled: False
-    Widget:
+    Button:
+        size_hint: .3,1
+        color: "black"
+        disabled_color: "black"
+        text: "Time 3"
+        disabled: True
+        background_disabled_normal: ""
+        background_normal: ""
+        #multiplier to the texture color. The default texture is grey, so just setting the background color will give a darker result. To set a plain color, set the background_normal to ''.
+        background_color: "red"
 
 <AnalogClockFace>:
     #ID's create weak references
