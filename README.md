@@ -59,7 +59,7 @@ cd pietimer_kivy/bin
 sha256sum -c ../SHA256SUMS 
 ```
 
-2. Connect your device and run
+2. Connect your device via a USB cable (in USB Debugging Mode), and run
 
 `adb devices`
 
