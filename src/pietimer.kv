@@ -7,7 +7,7 @@
 #:set text_color [.1, .1, .1]
 #:set text_area_hint [.5, None]
 #:set pie_radius_factor .74
-#:set p2_size 20, 30 
+#:set p2_size '20sp', '30sp'
 
 #The main interface - must be class name? Only one root objec is allowed by .kv
 TimerPager:
@@ -442,14 +442,34 @@ TimerPager:
         id: 'moveout'
         anchor_x: 'right'
         anchor_y: 'bottom'
-        Image: 
-            id: 'arrow_right'
-            #size_hint very small required to move image around. 
-            #size_hint: .1, .1
-            size_hint: None,None
-            size: 35,35
-            source: './menu_sm.png'
-            opacity: app.menu_opacity
+        size_hint: .1, .1
+        opacity: app.menu_opacity
+        #CustomHamburger:
+        canvas.before:
+            Color:
+                rgba: 1, 1, 1, 1  # white color
+            RoundedRectangle:
+                pos: root.width - self.x - self.width * 1, self.y + self.height * 0.7
+                size: self.width * 0.8, self.height * 0.1
+                radius: 3,3,3,3
+            RoundedRectangle:
+                pos: root.width - self.x - self.width * 1, self.y + self.height * 0.5
+                size: self.width * 0.8, self.height * 0.1
+                radius: 3,3,3,3
+            RoundedRectangle:
+                pos: root.width - self.x - self.width * 1, self.y + self.height * 0.3
+                #Rectangle can't use pos_hint
+                #pos_hint: {"x":0, "y":0}
+                size: self.width * 0.8, self.height * 0.1
+                radius: 3,3,3,3
+        #Image: 
+        #    id: 'arrow_right'
+        #    #size_hint very small required to move image around. 
+        #    #size_hint: .1, .1
+        #    size_hint: .1, .1
+        #    fit_mode: "cover"
+        #    #size: 35,35
+        #    source: './menu_sm.png'
 
     AnchorLayout:
         id: "clock_buttons"
