@@ -577,6 +577,38 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
             self.start_stop_color = 'red'
             self.myclock = Clock.schedule_interval(self.runclock, self.clock_interval)
 
+    def reset_clock(self, widget):  #pylint: disable=unused-argument
+        """Pietimer, Reset time to defaults"""
+        self.str_hours = "00"
+        self.acf_object.ids['"hrs_top"'].text = self.str_hours
+        self.str_min = "25"
+        self.acf_object.ids['"min_top"'].text = self.str_min
+        self.str_sec = "00"
+        self.acf_object.ids['"sec_top"'].text = self.str_sec
+
+        try:
+            self.seconds_left = int(self.acf_object.ids['"sec_top"'].text) + \
+                60*int(self.acf_object.ids['"min_top"'].text) + \
+                3600*int(self.acf_object.ids['"hrs_top"'].text)
+        except (TypeError, ValueError):
+            #do nothing
+            self.acf_object.ids['"hrs_top"'].text = "00"
+
+        self.start_seconds = self.seconds_left
+        self.adjust_pie()
+
+        if self.clock_features['debug'] is True:
+            print("IDS=",self.acf_object.ids)
+            print("SELF HRS=", self.str_hours)
+            print("SELF MIN=", self.str_min)
+            print("SELF SEC=", self.str_sec)
+            print("ACF HRS=", self.acf_object.ids['"hrs_top"'].text)
+            print("ACF MIN=", self.acf_object.ids['"min_top"'].text)
+            print("ACF SEC=", self.acf_object.ids['"sec_top"'].text)
+            print(self.seconds_left)
+            print("===========================")
+            print("START=",self.start_seconds)
+
     def set_new_time(self, widget):  #pylint: disable=unused-argument
         """Pietimer. If user updates any hr,min,sec update seconds left"""
         if self.clock_features['debug'] is True:

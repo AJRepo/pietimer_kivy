@@ -111,10 +111,15 @@ TimerPager:
         BoxLayout:
             size_hint: 1, .25
             Button:
-                size_hint: .3, .6  #fraction of fraction
+                size_hint: .4, .6  #fraction of fraction
                 text: app.start_stop_text
                 background_color: app.start_stop_color
                 on_press: app.toggle_running(self)
+            Button:
+                size_hint: .4, .6
+                text: "Reset"
+                on_press: app.reset_clock(self)
+                disabled: app.running  #change to True when clock is running
             Widget:
             Image: 
                 size_hint: .2, 1
@@ -138,19 +143,19 @@ TimerPager:
     P2TimerText:
         id: pc_hours
         name: "hrs_tt"
-        text: "00"
+        text: app.str_hours
         disabled: app.running  #change to True when clock is running
         on_text_validate: app.set_new_time(self)
     P2TimerText:
         id: pc_min
         name: "min_tt"
-        text: "25"
+        text: app.str_min
         disabled: app.running  #change to True when clock is running
         on_text_validate: app.set_new_time(self)
     P2TimerText:
         id: pc_sec
         name: "sec_tt"
-        text: "00"
+        text: app.str_sec
         disabled: app.running  #change to True when clock is running
         on_text_validate: app.set_new_time(self)
     Button:
