@@ -685,7 +685,7 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
 
 #initiate class and run
 if __name__ == "__main__":
-    __version__ = "1.2.0"
+    __version__ = "1.3.0"
     #Use variable app so we can call it from .kv file
     app = PieTimer(sys.argv[1:])
     app.run()
