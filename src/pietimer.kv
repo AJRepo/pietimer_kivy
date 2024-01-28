@@ -6,8 +6,13 @@
 #:set pie_bg_color [1, 1, 1]
 #:set text_color [.1, .1, .1]
 #:set text_area_hint [.5, None]
-#:set pie_radius_factor .74
+#:set pie_radius_factor .75
 #:set p2_size '20sp', '30sp'
+#See root.time_left_color for what's running now
+#:set time1_color 'blue'
+#:set time2_color 'orange'
+#:set time3_color 'red'
+
 
 #The main interface - must be class name? Only one root objec is allowed by .kv
 TimerPager:
@@ -15,10 +20,9 @@ TimerPager:
 #Dynamic Class: Used for h,m,s buttons (Templates Deprecated 1.7 onward)
 <TimerButton@Button>:
     disabled: True
-    background_normal: ''
-    background_disabled_normal: self.background_normal
-    background_color: (.9,.9,.9,1)
-    #font_size: self.width/1.5
+    #background_normal: '' #'' makes background_color a color and not shading
+    #background_disabled_normal: self.background_normal
+    background_color: (1,1,1,0)
     font_size: '22sp'
     size: 40,50
     color: text_color
@@ -157,7 +161,7 @@ TimerPager:
         background_disabled_normal: ""
         background_normal: ""
         #multiplier to the texture color. The default texture is grey, so just setting the background color will give a darker result. To set a plain color, set the background_normal to ''.
-        background_color: "blue"
+        background_color: time1_color
 <Time2Controls>:
     id: time2controls
     Switch:
@@ -198,7 +202,7 @@ TimerPager:
         background_disabled_normal: ""
         background_normal: ""
         #multiplier to the texture color. The default texture is grey, so just setting the background color will give a darker result. To set a plain color, set the background_normal to ''.
-        background_color: "orange"
+        background_color: time2_color
 <Time3Controls>:
     id: time3controls
     Switch:
@@ -238,7 +242,7 @@ TimerPager:
         background_disabled_normal: ""
         background_normal: ""
         #multiplier to the texture color. The default texture is grey, so just setting the background color will give a darker result. To set a plain color, set the background_normal to ''.
-        background_color: "red"
+        background_color: time3_color
 
 <AnalogClockFace>:
     #ID's create weak references
