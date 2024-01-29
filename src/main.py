@@ -96,6 +96,7 @@ class AnalogClockFace(FloatLayout): #pylint: disable=too-many-instance-attribute
 
     #for using .kv file
     def __init__(self, clock_features=None, **kwargs):
+        """AnalogClockFace"""
         super().__init__(**kwargs)
         ##the above is the same as super(AnalogClockFace,self)....
 
@@ -223,17 +224,23 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
     """PieTimer Child Class of App Parent class
     """
     acf_object = ObjectProperty(None)
+    time1_object = ObjectProperty(None)
+    time2_object = ObjectProperty(None)
+    time3_object = ObjectProperty(None)
     pager_layout = ObjectProperty(None)
     str_hours = StringProperty("0a")
     str_min = StringProperty("0b")
     str_sec = StringProperty("0c")
     top_opacity = NumericProperty(0)
+    loop = NumericProperty(4)
     menu_opacity = NumericProperty(1)
     running = BooleanProperty(True)
     start_stop_color = ColorProperty('red')
+    time_left_color = ColorProperty('blue')
     f_angle_end = NumericProperty(275)
     start_stop_text = StringProperty("stop")
     def __init__(self, sys_args, **kwargs):
+        """PieTimer"""
         super().__init__(**kwargs)
         self.args = sys_args
 
@@ -245,7 +252,10 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
         self.countdown = True
         self.clock_interval = .1
         self.repeat = 0
+        self.loop = 4
         self.start_stop_color = 'red'
+        self.which_time = 1
+        self.time_left_color = 'blue'
 
         #this sets the variable self.seconds_left based on what is returned by setup_args
         self.set_start_seconds()
@@ -299,6 +309,9 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
         self.pager_layout = TimerPager()
         #self.pager_layout = TimerPager(clock_features=self.clock_features)
         self.acf_object = AnalogClockFace(clock_features=self.clock_features)
+        self.time3_object = Time3Controls()
+        self.time2_object = Time2Controls()
+        self.time1_object = Time1Controls()
         if self.do_page_layout is True:
             return self.pager_layout
         #else
@@ -529,6 +542,27 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
                 print("ENDING or REPEATING!!!")
             #Handle Repeat flag if set
             self.repeat = self.repeat - 1
+            self.loop = self.loop - 1
+            do_time2 = True
+            if self.loop >= 1 and do_time2 is True:
+                if self.clock_features['debug'] is True:
+                    print("DEBUG LOOP=", self.loop)
+                if self.which_time == 1:
+                    self.seconds_left = 300 #to be time2
+                    self.which_time = 2
+                    self.time_left_color = "orange"
+                else:
+                    self.seconds_left = self.start_seconds
+                    self.which_time = 1
+                    self.time_left_color = "blue"
+                return True
+            do_time3 = True
+            if self.loop == 0 and do_time3 is True:
+                self.seconds_left = 1200 #to be time3
+                self.which_time = 3
+                self.time_left_color = "red"
+                return True
+
             if self.repeat >= 1:
                 if self.clock_features['debug'] is True:
                     print("DEBUG REPEAT=", self.repeat)
@@ -622,18 +656,29 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
             print("APP HRS=", app.str_hours)
             print("APP MIN=", app.str_min)
             print("APP SEC=", app.str_sec)
+            #print(widget.parent.parent.parent.ids.obj.ids['"hrs_top"'].text)
+            #print(self.time1_object)
+            #for id, value in self.ids.items():
+            #    if value.__self__ == widget:
+            #        print(f"ID={id}")
+            #    else:
+            #        print(f"NOT={id}")
             #for foobar, value in widget:
             #    print(f"FOOBAR={foobar}")
             #    print(f"VALUE={value}")
-        if widget.name == "hrs_tt":
-            self.str_hours = widget.text
-            self.acf_object.ids['"hrs_top"'].text = widget.text
-        if widget.name == "min_tt":
-            self.str_min = widget.text
-            self.acf_object.ids['"min_top"'].text = widget.text
-        if widget.name == "sec_tt":
-            self.str_sec = widget.text
-            self.acf_object.ids['"sec_top"'].text = widget.text
+        #for id, value in self.time1_object.ids.items():
+        #    print(f"ID={id}, VALUE={value}")
+        #    print(f"TEXT={value.text}")
+        match widget.name:
+            case "t1_hrs_tt":
+                self.str_hours = widget.text
+                self.acf_object.ids['"hrs_top"'].text = widget.text
+            case "t1_min_tt":
+                self.str_min = widget.text
+                self.acf_object.ids['"min_top"'].text = widget.text
+            case "t1_sec_tt":
+                self.str_sec = widget.text
+                self.acf_object.ids['"sec_top"'].text = widget.text
 
         try:
             self.seconds_left = int(self.acf_object.ids['"sec_top"'].text) + \
@@ -662,12 +707,6 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
             print("===========================")
             print("START=",self.start_seconds)
 
-        #print(widget.parent.parent.parent.ids.obj.ids['"hrs_top"'].text)
-        #for id, value in self.ids.items():
-        #    if value.__self__ == widget:
-        #        print(f"ID={id}")
-        #    else:
-        #        print(f"NOT={id}")
         #PieTimer.set_start_seconds(self)
 
     def print_debug(self, widget):

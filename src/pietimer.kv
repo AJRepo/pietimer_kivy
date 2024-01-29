@@ -142,22 +142,28 @@ TimerPager:
         #background_color: "green"
     P2TimerText:
         id: pc_hours
-        name: "hrs_tt"
+        name: "t1_hrs_tt"
         text: app.str_hours
         disabled: app.running  #change to True when clock is running
         on_text_validate: app.set_new_time(self)
+        on_focus:
+            if not self.focus: app.set_new_time(self)
     P2TimerText:
         id: pc_min
-        name: "min_tt"
+        name: "t1_min_tt"
         text: app.str_min
         disabled: app.running  #change to True when clock is running
         on_text_validate: app.set_new_time(self)
+        on_focus:
+            if not self.focus: app.set_new_time(self)
     P2TimerText:
         id: pc_sec
-        name: "sec_tt"
+        name: "t1_sec_tt"
         text: app.str_sec
         disabled: app.running  #change to True when clock is running
         on_text_validate: app.set_new_time(self)
+        on_focus:
+            if not self.focus: app.set_new_time(self)
     Button:
         size_hint: .3,1
         #color: "black"
@@ -178,9 +184,7 @@ TimerPager:
         text: "Time2 On "
         #on_press: self.text = "Time2 On " if self.text=="Time2 Off" else "Time2 Off"
         disabled: app.running
-        #background_color: (0,1,0,1)
         background_color: (.9,.9,.9,1)
-        #background_normal: "(.9,.1,.1,1)"
     P2TimerText:
         id: pc_hours
         name: "hrs_tt"
@@ -284,7 +288,8 @@ TimerPager:
                 #angle_start: 0
                 #angle_end: 180
             Color:
-                rgb: root.time_left_color
+                #rgb: root.time_left_color
+                rgb: app.time_left_color
             Ellipse:
                 group: "fore_pie"
                 #Pos is the lower left corner of the square bounding the ellipse. Ugh.
@@ -417,23 +422,29 @@ TimerPager:
             #See TimerText Parent Dynamic Class Above (child class)
             TimerText:
                 id: "hrs_top"
-                name: "hrs_tt"
+                name: "t1_hrs_tt"
                 text: app.str_hours
                 disabled: app.running  #change to True when clock is running
                 on_text_validate: app.set_new_time(self)
+                on_focus:
+                    if not self.focus: app.set_new_time(self)
             TimerText:
                 id: "min_top"
-                name: "min_tt"
+                name: "t1_min_tt"
                 text: app.str_min
                 disabled: app.running  #change to True when clock is running
                 #Note: experimented with (self.name) but also requires self.text
                 on_text_validate: app.set_new_time(self)
+                on_focus:
+                    if not self.focus: app.set_new_time(self)
             TimerText:
                 id: "sec_top"
-                name: "sec_tt"
+                name: "t1_sec_tt"
                 text: app.str_sec
                 disabled: app.running  #change to True when clock is running
                 on_text_validate: app.set_new_time(self)
+                on_focus:
+                    if not self.focus: app.set_new_time(self)
 
     AnchorLayout:
         id: "debug_buttons"
