@@ -41,6 +41,9 @@ if platform == 'linux':
     #os.environ['input_mouse_%(name)s'] = ''
     Config.set('input', '%(name)s', '')
     Config.set("graphics", "always_on_top", 1)  # The app will start with the window on top
+else:
+    #assume now in android or Ios (e.g. platform == 'android' )
+    Config.set('kivy', 'keep_screen_on', '1')
     #print(f"PLATFORM={platform}")
 
 #Uncomment the below to get NO messages at all from Kivy to the console
@@ -628,6 +631,8 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
         self.acf_object.ids['"min_top"'].text = self.str_min
         self.str_sec = "00"
         self.acf_object.ids['"sec_top"'].text = self.str_sec
+        self.which_time = 1
+        self.time_left_color = "blue"
 
         try:
             self.seconds_left = int(self.acf_object.ids['"sec_top"'].text) + \
