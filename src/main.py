@@ -235,6 +235,8 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
     loop = NumericProperty(4)
     menu_opacity = NumericProperty(1)
     running = BooleanProperty(True)
+    time2_active = BooleanProperty(False)
+    time3_active = BooleanProperty(False)
     start_stop_color = ColorProperty('red')
     time_left_color = ColorProperty('blue')
     f_angle_end = NumericProperty(275)
@@ -256,6 +258,8 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
         self.start_stop_color = 'red'
         self.which_time = 1
         self.time_left_color = 'blue'
+        self.time2_active = False
+        self.time3_active = False
 
         #this sets the variable self.seconds_left based on what is returned by setup_args
         self.set_start_seconds()
@@ -543,8 +547,7 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
             #Handle Repeat flag if set
             self.repeat = self.repeat - 1
             self.loop = self.loop - 1
-            do_time2 = True
-            if self.loop >= 1 and do_time2 is True:
+            if self.loop >= 1 and self.time2_active is True:
                 if self.clock_features['debug'] is True:
                     print("DEBUG LOOP=", self.loop)
                 if self.which_time == 1:
@@ -556,8 +559,7 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
                     self.which_time = 1
                     self.time_left_color = "blue"
                 return True
-            do_time3 = True
-            if self.loop == 0 and do_time3 is True:
+            if self.loop == 0 and self.time3_active is True:
                 self.seconds_left = 1200 #to be time3
                 self.which_time = 3
                 self.time_left_color = "red"
@@ -588,6 +590,13 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
         else:
             self.menu_opacity = 1
         return True
+
+    def toggle_time(self, widget):
+        """Pietimer. Toggle if time is on or off"""
+        if widget.name == "time2_switch":
+            self.time2_active = widget.active
+        if widget.name == "time3_switch":
+            self.time3_active = widget.active
 
     def toggle_running(self, widget):
         """Pietimer. Toggle self.running variable here in widget and in App"""

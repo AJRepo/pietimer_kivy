@@ -178,13 +178,16 @@ TimerPager:
     id: time2controls
     Switch:
         id: "tb2"
+        name: "time2_switch"
         size_hint: .5, 1
-        #state: "down"  #or "normal"
-        active: False
-        text: "Time2 On "
         #on_press: self.text = "Time2 On " if self.text=="Time2 Off" else "Time2 Off"
-        disabled: app.running
+        text: "Time2 On "
+        #    if disabled on_touch_up: app.toggle_time(self)
         background_color: (.9,.9,.9,1)
+        disabled: app.running
+        active: app.time2_active
+        on_active: app.toggle_time(self)
+        #if not disabled on_touch_up: app.toggle_time(self)
     P2TimerText:
         id: pc_hours
         name: "hrs_tt"
@@ -217,14 +220,15 @@ TimerPager:
     id: time3controls
     Switch:
         id: "tb3"
-        #text: "Time3 On "
+        name: "time3_switch"
         size_hint: .5, 1
         #on_press: self.text = "Time3 On " if self.text=="Time3 Off" else "Time3 Off"
-        disabled: app.running
-        #background_color: (.9,.9,.9,1)
         background_color: (0,0,.99,1)
         background_normal: "(.99,0,0,1)"
         background_down: "(.99,0,0,1)"
+        disabled: app.running
+        active: app.time3_active
+        on_active: app.toggle_time(self)
     P2TimerText:
         id: pc_hours
         name: "hrs_tt"
