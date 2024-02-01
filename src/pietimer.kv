@@ -190,22 +190,28 @@ TimerPager:
         #if not disabled on_touch_up: app.toggle_time(self)
     P2TimerText:
         id: pc_hours
-        name: "hrs_tt"
+        name: "t2_hrs_tt"
         text: "00"
         disabled: app.running  #change to True when clock is running
-        #on_text_validate: app.set_new_time(self)
+        on_text_validate: app.set_new_time(self)
+        on_focus:
+            if not self.focus: app.set_new_time(self)
     P2TimerText:
         id: pc_min
-        name: "min_tt"
+        name: "t2_min_tt"
         text: "05"
         disabled: app.running  #change to True when clock is running
-        #on_text_validate: app.set_new_time(self)
+        on_text_validate: app.set_new_time(self)
+        on_focus:
+            if not self.focus: app.set_new_time(self)
     P2TimerText:
         id: pc_sec
-        name: "sec_tt"
+        name: "t2_sec_tt"
         text: "00"
         disabled: app.running  #change to True when clock is running
-        #on_text_validate: app.set_new_time(self)
+        on_text_validate: app.set_new_time(self)
+        on_focus:
+            if not self.focus: app.set_new_time(self)
     Button:
         size_hint: .3,1
         color: "black"
@@ -231,19 +237,19 @@ TimerPager:
         on_active: app.toggle_time(self)
     P2TimerText:
         id: pc_hours
-        name: "hrs_tt"
+        name: "t3_hrs_tt"
         text: "00"
         disabled: app.running  #change to True when clock is running
         #on_text_validate: app.set_new_time(self)
     P2TimerText:
         id: pc_min
-        name: "min_tt"
+        name: "t3_min_tt"
         text: "20"
         disabled: app.running  #change to True when clock is running
         #on_text_validate: app.set_new_time(self)
     P2TimerText:
         id: pc_sec
-        name: "sec_tt"
+        name: "t3_sec_tt"
         text: "00"
         disabled: app.running  #change to True when clock is running
         #on_text_validate: app.set_new_time(self)

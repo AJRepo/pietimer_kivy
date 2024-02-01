@@ -254,15 +254,20 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
         self.running = True
         self.seconds_left = 0.0   #could be a fraction of a second
         self.start_seconds = 0.0   #could be a fraction of a second
+        self.t2_start_seconds = 300
         self.countdown = True
         self.clock_interval = .1
         self.repeat = 0
         self.loop = 4
+        self.this_loop = 0
         self.start_stop_color = 'red'
         self.which_time = 1
         self.time_left_color = 'blue'
         self.time2_active = False
         self.time3_active = False
+        self.t2_str_hours = "00"
+        self.t2_str_min = "05"
+        self.t2_str_sec = "00"
 
         #this sets the variable self.seconds_left based on what is returned by setup_args
         self.set_start_seconds()
@@ -545,24 +550,37 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
             print("DEBUG self.RUNNING=", self.running)
 
         if self.seconds_left <=0:
+            #print(f"DEBUG 0 this_loop = {self.this_loop} loop= {self.loop} ")
+            #print(f"DEBUG 0 in time={self.which_time}")
             if self.clock_features['debug'] is True:
                 print("ENDING or REPEATING!!!")
             #Handle Repeat flag if set
             self.repeat = self.repeat - 1
-            self.loop = self.loop - 1
-            if self.loop >= 1 and self.time2_active is True:
+            if self.this_loop < self.loop and self.loop >= 1 and self.time2_active is True:
                 if self.clock_features['debug'] is True:
-                    print("DEBUG LOOP=", self.loop)
+                    print(f"DEBUG this_loop =  {self.this_loop}, loop={self.loop} ")
                 if self.which_time == 1:
-                    self.seconds_left = 300 #to be time2
+                    #print(f"DEBUG 1 Loop {self.this_loop + 1} of {self.loop} ")
+                    #print(f"DEBUG 1 seconds {self.seconds_left} ")
+                    self.seconds_left = self.t2_start_seconds
                     self.which_time = 2
                     self.time_left_color = "orange"
+                    return True
+                if self.this_loop >= self.loop - 1 and self.which_time >= 2:
+                    #Because loop-- after which_time = 2 and because
+                    #   this might be called again while seconds_left < 0
+                    self.which_time = 3
+                    #last of loop do -  not return True, continue
                 else:
+                    #print(f"DEBUG else Loop {self.this_loop + 1} of {self.loop} ")
+                    #print(f"DEBUG else seconds {self.seconds_left} ")
                     self.seconds_left = self.start_seconds
                     self.which_time = 1
                     self.time_left_color = "blue"
-                return True
-            if self.loop == 0 and self.time3_active is True:
+                    self.this_loop = self.this_loop + 1
+                    return True
+            #note: if loop >=1 then never get below this line
+            if self.time3_active is True:
                 self.seconds_left = 1200 #to be time3
                 self.which_time = 3
                 self.time_left_color = "red"
@@ -571,6 +589,8 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
             if self.repeat >= 1:
                 if self.clock_features['debug'] is True:
                     print("DEBUG REPEAT=", self.repeat)
+                self.which_time = 1
+                self.time_left_color = "blue"
                 self.seconds_left = self.start_seconds
                 return True
 
@@ -633,6 +653,8 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
         self.acf_object.ids['"sec_top"'].text = self.str_sec
         self.which_time = 1
         self.time_left_color = "blue"
+        self.this_loop = 0
+        self.loop = 4
 
         try:
             self.seconds_left = int(self.acf_object.ids['"sec_top"'].text) + \
@@ -693,6 +715,25 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
             case "t1_sec_tt":
                 self.str_sec = widget.text
                 self.acf_object.ids['"sec_top"'].text = widget.text
+            case "t2_hrs_tt":
+                self.t2_str_hours = widget.text
+                self.t2_start_seconds = int(self.t2_str_sec) + \
+                    60*int(self.t2_str_min) + \
+                    3600*int(self.t2_str_hours)
+            case "t2_min_tt":
+                self.t2_str_min = widget.text
+                self.t2_start_seconds = int(self.t2_str_sec) + \
+                    60*int(self.t2_str_min) + \
+                    3600*int(self.t2_str_hours)
+            case "t2_sec_tt":
+                self.t2_str_sec = widget.text
+                self.t2_start_seconds = int(self.t2_str_sec) + \
+                    60*int(self.t2_str_min) + \
+                    3600*int(self.t2_str_hours)
+            case _:
+                #just set to something
+                self.str_min = "7"
+                self.acf_object.ids['"min_top"'].text = "7"
 
         try:
             self.seconds_left = int(self.acf_object.ids['"sec_top"'].text) + \
