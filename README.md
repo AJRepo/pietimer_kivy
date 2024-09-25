@@ -47,6 +47,16 @@ as src/main.py, otherwise call it as "python3 /path/to/main.py"
 
 # Installation on Mobile Device (Android)
 
+There are two ways to do an installation on a mobile device
+
+(1) Compile or Download to your computer and install using adb
+
+(2) Click on the apk release
+
+## Download to your computer and install using adb
+
+0. Download the .apk file and checksum from the "Assets" section 
+
 1. Do a checksum of the .apk file
 
 ```
@@ -68,6 +78,15 @@ where XXXX is your android device and YYYY is the apk binary.
 
 `adb -s XXXX logcat *:S python:D`
 
+## Click on the apk release
+
+To install using the apk release on your browser: 
+
+1. Open a browser on your mobile device and go to https://github.com/AJRepo/pietimer_kivy/releases
+
+2. Look for the latest release under "Assets" 
+
+3. Click on it, and click "allow" when your browser promots you. 
 
 # Directions
 
