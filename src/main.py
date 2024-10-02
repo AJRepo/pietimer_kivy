@@ -204,6 +204,7 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
     """
     acf_object = ObjectProperty(None)
     pager_layout = ObjectProperty(None)
+    str_init_time = StringProperty("0h 0m 0s")
     str_hours = StringProperty("0a")
     str_min = StringProperty("0b")
     str_sec = StringProperty("0c")
@@ -242,8 +243,11 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
         if self.clock_features['debug'] is True:
             print(f"sys.platform={sys.platform}")
             print(f"platform={sys.platform}")
+            print(f"xsize={self.clock_features['x_size']}")
+            print(f"ysize={self.clock_features['y_size']}")
         if platform == "android":
             if Window.width > Window.height:
+                #if width > height on android then  make smaller square. 
                 self.clock_features['x_size'] = Window.height
                 self.clock_features['y_size'] = Window.height
             else:
@@ -270,6 +274,21 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
     #    App.__init__(self)
     #    self.clock_features = self.setup_args()
     #    #self.build()
+
+    def round_hours(self, round_seconds_left):
+        """return a string with the rounded # hours left"""
+        str_hours = str(int((round_seconds_left/3600)%24)).rjust(2,"0")
+        return(str_hours)
+        
+    def round_minutes(self, round_seconds_left):
+        """return a string with the rounded # min left"""
+        str_min = str(int((round_seconds_left/60)%60)).rjust(2,"0")
+        return(str_min)
+
+    def round_sec(self, round_seconds_left):
+        """return a string with the rounded # sec left"""
+        str_sec = str(int(round_seconds_left%60)).rjust(2,"0")
+        return(str_sec)
 
     def build(self):
         """Pietimer. This is the last setup of the app. All stuff modifying wigets overridden"""
@@ -377,8 +396,9 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
             elif opt in ("-b", "--buttons"):
                 buttons = True
 
-        int_y_size = self.default_size_check(int_y_size, int_x_size)
         int_x_size = self.default_size_check(int_x_size, int_y_size)
+        # Have a rectangle. Part above holds the total time. 
+        int_y_size = self.default_size_check(int_y_size, int_x_size) + 100
 
         #Debugging
         if debug is True:
@@ -443,8 +463,11 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
 
         return fraction_left
 
+
     def set_start_seconds(self):
-        """Pietimer. Convert start time parameters to seconds"""
+        """Pietimer. Convert start time parameters to seconds
+        Set the display time at the top of the window"""
+        self.str_init_time = ""
 
         if self.clock_features['debug'] is True:
             print("IN: set_start_seconds: ", self.clock_features)
@@ -460,6 +483,15 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
                         self.clock_features['dict_time']['seconds']
 
         self.start_seconds = self.seconds_left
+
+        #Set the label at the top of the clock
+        if PieTimer.round_hours(self,self.start_seconds) != "00":
+            self.str_init_time = str(int(PieTimer.round_hours(self,self.seconds_left))) + "h "
+        if PieTimer.round_minutes(self,self.start_seconds) != "00":
+            self.str_init_time = self.str_init_time + str(int(PieTimer.round_minutes(self,self.start_seconds))) + "m "
+        if PieTimer.round_sec(self,self.start_seconds) != "00":
+            self.str_init_time = self.str_init_time + str(int(PieTimer.round_sec(self,self.start_seconds))) + "s"
+
         return self.seconds_left
 
     def runclock(self,delta_t=0):
@@ -475,13 +507,15 @@ class PieTimer(App): #pylint: disable=too-many-instance-attributes
                 #print("DEBUG: ----------RUNNING DOWN")
                 #Note: Changed from calling the widget to a StringProperty
                 #self.ids['"hrs"'].text =
-                self.str_hours = str(int((round_seconds_left/3600)%24)).rjust(2,"0")
+                self.str_hours = PieTimer.round_hours(self,round_seconds_left)
                 self.acf_object.str_hours = self.str_hours
                 #self.ids['"min"'].text =
-                self.str_min = str(int((round_seconds_left/60)%60)).rjust(2,"0")
+                self.str_min = PieTimer.round_minutes(self,round_seconds_left)
                 self.acf_object.str_min = self.str_min
                 #self.ids['"sec"'].text =
-                self.str_sec = str(int(round_seconds_left%60)).rjust(2,"0")
+                #if self.clock_features['debug'] is True:
+                #    print("DEBUG ROUNDING SECONDS")
+                self.str_sec = PieTimer.round_sec(self,round_seconds_left)
                 self.acf_object.str_sec = self.str_sec
 
                 if self.clock_features['term_ppm'] == 1 \

@@ -80,6 +80,19 @@ TimerPager:
     #size_hint: 1,1
     #size: 0.9*min(root.size), 0.9*min(root.size)
     #size: 1.9*self.minium_height, 1.9*self.minumum_width
+    AnchorLayout:
+        id: "inittime"
+        anchor_x: 'center'
+        anchor_y: 'top'
+        Label:
+            #FloatLayout only pos_hint and the size_hint properties of its children.
+            id: "toptime"
+            size_hint: .3, .1
+            #size_hint: None, None
+            #size: 1.1* self.texture_size[0], 1.25* self.texture_size[1]
+            #pos_hint: {"center_x":0.1, "center_y":0.1}
+            text: app.str_init_time
+            #on_press: app.toggle_running(self)
     FloatLayout:
         id: "pie"
         #size_hint: 1,1  #testing removing for android
